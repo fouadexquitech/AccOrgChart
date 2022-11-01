@@ -231,9 +231,9 @@
     .orgchart .node .title {
         box-sizing: border-box;
         padding: 15px;
-        width: 200px;
+        width: 220px;
         text-align: center;
-        font-size: 1.00rem;
+        font-size: 0.8rem;
         font-weight: bold;
         height: 50px;
         overflow: hidden;
@@ -277,15 +277,16 @@
     .orgchart .node .content {
         box-sizing: border-box;
         padding: 15px;
-        height: 50px;
-        font-size: 0.9rem;
+        width: 220px;
+        height: 80px;
+        font-size: 0.7rem;
         border: 1px solid rgba(24, 135, 231, 0.8);
         border-radius: 0 0 4px 4px;
-        text-align: center;
+        /*text-align: center;*/
         background-color: #fff;
         color: #333;
         text-overflow: ellipsis;
-        white-space: nowrap;
+        /*white-space: nowrap;*/
     }
 
     .orgchart.b2t .node .content {

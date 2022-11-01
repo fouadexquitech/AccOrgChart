@@ -25,3 +25,7 @@ body {
   text-align: center;
 }
 
+.bg-brand {
+    background-color: #115b9b !important;
+}
+
