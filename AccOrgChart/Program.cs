@@ -1,11 +1,17 @@
+using AccOrgChart.Repository;
 using AccOrgChart.Repository.Interfaces;
 using AccOrgChart.Repository.Managers;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 
 var builder = WebApplication.CreateBuilder(args);
+
 
 // Add services to the container.
 builder.Services.AddRazorPages();
 builder.Services.AddControllersWithViews().AddRazorRuntimeCompilation();
+
+builder.Services.AddDbContext<HR_StatisticsDbContext>(opts => opts.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 builder.Services.AddTransient<IActivitiesRepository, ActivitiesRepository>();
 builder.Services.AddTransient<ICodesRepository, CodesRepository>();
