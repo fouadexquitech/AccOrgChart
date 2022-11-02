@@ -1,6 +1,8 @@
-﻿namespace AccOrgChart.Repository.Managers
+﻿using AccOrgChart.Repository.Interfaces;
+
+namespace AccOrgChart.Repository.Managers
 {
-    public class JobsRepository
+    public class JobsRepository:IJobsRepository
     {
     }
 }

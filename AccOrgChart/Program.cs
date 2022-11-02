@@ -1,8 +1,16 @@
+using AccOrgChart.Repository.Interfaces;
+using AccOrgChart.Repository.Managers;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddRazorPages();
 builder.Services.AddControllersWithViews().AddRazorRuntimeCompilation();
+
+
+builder.Services.AddTransient<IActivitiesRepository, ActivitiesRepository>();
+builder.Services.AddTransient<ICodesRepository, CodesRepository>();
+builder.Services.AddTransient<IWorkFlowRepository, WorkFlowRepository>();
 
 var app = builder.Build();
 
