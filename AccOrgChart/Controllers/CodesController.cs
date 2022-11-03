@@ -9,9 +9,7 @@ using AccOrgChart.Repository.View_Models;
 
 namespace AccOrgChart.Controllers
 {
-    [Route("api/[controller]")]
-    [ApiController]
-    public class CodesController : ControllerBase
+    public class CodesController : Controller
     {
         private readonly ILogger<CodesController> _ilogger;
         private ICodesRepository _codesRepository;    
@@ -23,7 +21,6 @@ namespace AccOrgChart.Controllers
         }
 
 
-        [HttpGet("GetCodesByType")]
         public List<TblCode> GetCodesByType(int type)
         {
             try

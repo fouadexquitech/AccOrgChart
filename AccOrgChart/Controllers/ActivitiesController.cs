@@ -11,9 +11,7 @@ using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 namespace AccOrgChart.Controllers
 {
-    [Route("api/[controller]")]
-    [ApiController]
-    public class ActivitiesController : ControllerBase
+    public class ActivitiesController : Controller
     {
         private readonly ILogger<ActivitiesController> _ilogger;
         private IActivitiesRepository _activitiesRepository;
@@ -26,7 +24,6 @@ namespace AccOrgChart.Controllers
 
 
         #region "ActivityGrp"
-        [HttpGet("GetActivityGroup")]
         public List<TblActivityGroup> GetActivityGroup(int ActGrpId)
         {
             try
@@ -40,7 +37,6 @@ namespace AccOrgChart.Controllers
             }
         }
 
-        [HttpPost("UpdateActivityGroup")]
         public bool UpdateActivityGroup(ActivityGroup activity)
         {
             try
@@ -54,7 +50,6 @@ namespace AccOrgChart.Controllers
             }
         }
 
-        [HttpPost("DelActivityGroup")]
         public bool DelActivityGroup(int id)
         {
             try
@@ -68,7 +63,6 @@ namespace AccOrgChart.Controllers
             }
         }
 
-        [HttpPost("AddActivityGroup")]
         public bool AddActivityGroup(ActivityGroup a)
         {
             try
@@ -85,7 +79,6 @@ namespace AccOrgChart.Controllers
 
 
         #region "Activity"
-        [HttpGet("GetActivity")]
         public List<TblActivity> GetActivity(int id)
         {
             try
@@ -99,7 +92,6 @@ namespace AccOrgChart.Controllers
             }
         }
 
-        [HttpPost("UpdateActivity")]
         public bool UpdateActivity(Activities a)
         {
             try
@@ -113,7 +105,6 @@ namespace AccOrgChart.Controllers
             }
         }
 
-        [HttpPost("DelActivity")]
         public bool DelActivity(int id)
         {
             try
@@ -127,7 +118,6 @@ namespace AccOrgChart.Controllers
             }
         }
 
-        [HttpPost("AddActivity")]
         public bool AddActivity(Activities a)
         {
             try
@@ -144,7 +134,6 @@ namespace AccOrgChart.Controllers
 
 
         #region "ActivitySub"
-        [HttpGet("GetSubActivities")]
         public List<TblActivitySub> GetSubActivities()
         {
             try
@@ -158,7 +147,6 @@ namespace AccOrgChart.Controllers
             }
         }
 
-        [HttpPost("UpdateActivitySub")]
         public bool UpdateActivitySub(ActivitySub a)
         {
             try
@@ -172,7 +160,6 @@ namespace AccOrgChart.Controllers
             }
         }
 
-        [HttpPost("DelActivitySub")]
         public bool DelActivitySub(int id)
         {
             try
@@ -186,7 +173,6 @@ namespace AccOrgChart.Controllers
             }
         }
 
-        [HttpPost("AddActivitySub")]
         public bool AddActivitySub(ActivitySub a)
         {
             try
@@ -203,7 +189,6 @@ namespace AccOrgChart.Controllers
 
 
         #region "Task"
-        [HttpGet("GetTasks")]
         public List<TblActivityTask> GetTasks(int subActId)
         {
             try
@@ -217,7 +202,6 @@ namespace AccOrgChart.Controllers
             }
         }
 
-        [HttpPost("UpdateTaskDesc")]
         public bool UpdateTaskDesc(ActivityTask a)
         {
             try
@@ -231,7 +215,6 @@ namespace AccOrgChart.Controllers
             }
         }
 
-        [HttpPost("UpdateActivityTask")]
         public bool UpdateActivityTask(ActivityTask a)
         {
             try
@@ -245,7 +228,6 @@ namespace AccOrgChart.Controllers
             }
         }
 
-        [HttpPost("DeleteTask")]
         public bool DeleteTask(int id)
         {
             try
@@ -259,7 +241,6 @@ namespace AccOrgChart.Controllers
             }
         }
 
-        [HttpPost("AddTask")]
         public bool AddTask(ActivityTask a)
         {
             try

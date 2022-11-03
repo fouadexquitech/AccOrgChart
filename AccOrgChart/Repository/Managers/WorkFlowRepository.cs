@@ -5,13 +5,75 @@ using AccOrgChart.Repository.View_Models;
 
 namespace AccOrgChart.Repository.Managers
 {
-    public class WorkFlowRepository:IWorkFlowRepository
+    public class WorkFlowRepository : IWorkFlowRepository
     {
         private readonly HR_StatisticsDbContext _dbContext;
 
         public WorkFlowRepository(HR_StatisticsDbContext dbContext)
         {
             _dbContext = dbContext;
+        }
+
+        public Node? GetChartOrg(int subActId)
+        {
+            var roles = _dbContext.TblRoles.ToList();
+            var workFlows = (from b in _dbContext.VwJobWorkFlows
+                             where b.SubActivityId == subActId
+                             select b).ToList();
+
+            var root = workFlows.Where(x => x.JwParentId == null).FirstOrDefault();
+
+            Node? mainNode = null;
+            if (root != null)
+            {
+                mainNode = new Node();
+                mainNode.Id = root.JwId;
+                mainNode.RoleId = root.RoleId;
+
+                var role = roles.Where(x => x.RoleId == root.RoleId).FirstOrDefault();
+                if (role != null)
+                {
+                    mainNode.RoleName = role?.RoleDesc;
+
+                    GetChildrenNodes(mainNode, roles, workFlows);
+                }
+                
+            }
+
+            return mainNode;
+
+
+        }
+
+        private void GetChildrenNodes(Node node, List<TblRole> roles, List<VwJobWorkFlow> workFlows)
+        {
+            var childWorkflows = workFlows.Where(x => x.JwParentId == node.Id).ToList();
+            var childNodes = new List<Node>();
+            if (childWorkflows != null)
+            {
+                foreach (var workflow in childWorkflows)
+                {
+                    var childNode = new Node();
+
+                    childNode.Id = workflow.JwId;
+                    childNode.RoleId = workflow.RoleId;
+
+                    var role = roles.Where(x => x.RoleId == workflow.RoleId).FirstOrDefault();
+                    if (role != null)
+                    {
+                        childNode.RoleName = role?.RoleDesc;
+                    }
+
+                    childNodes.Add(childNode);
+                    node.Children = childNodes;
+                    GetChildrenNodes(childNode, roles, workFlows);
+                }
+
+
+            }
+            
+           
+
         }
 
 

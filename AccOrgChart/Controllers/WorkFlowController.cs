@@ -8,9 +8,7 @@ using AccOrgChart.Repository.View_Models;
 
 namespace AccOrgChart.Controllers
 {
-    [Route("api/[controller]")]
-    [ApiController]
-    public class WorkFlowController : ControllerBase
+    public class WorkFlowController : Controller
     {
         private readonly ILogger<WorkFlowController> _ilogger;
         private IWorkFlowRepository _workFlowRepository;
@@ -21,12 +19,11 @@ namespace AccOrgChart.Controllers
             _workFlowRepository = workFlowRepository;
         }
 
-        [HttpGet("GetWorkFlowBySubActivity")]
-        public List<WorkFlow> GetWorkFlowBySubActivity (int subActId)
+        public IActionResult GetWorkFlowBySubActivity (int subActId)
         {
             try
             {
-                return this._workFlowRepository.GetWorkFlowBySubActivity(subActId);
+                return Ok(this._workFlowRepository.GetWorkFlowBySubActivity(subActId));
             }
             catch (Exception ex)
             {
@@ -35,7 +32,6 @@ namespace AccOrgChart.Controllers
             }
         }
 
-        [HttpPost("AddWorkFlow")]
         public bool AddWorkFlow(WorkFlow wf)
         {
             try
@@ -49,7 +45,6 @@ namespace AccOrgChart.Controllers
             }
         }
 
-        [HttpPost("UpdateWorkFlowParentId")]
         public bool UpdateWorkFlowParentId(int wfId, int parentId)
         {
             try
@@ -63,7 +58,6 @@ namespace AccOrgChart.Controllers
             }
         }
 
-        [HttpPost("UpdateWorkFlow")]
         public bool UpdateWorkFlow(int wfId, int taskId, int roleId, int parentId)
         {
             try
@@ -74,6 +68,19 @@ namespace AccOrgChart.Controllers
             {
                 _ilogger.LogError(ex.Message);
                 return false;
+            }
+        }
+
+        public IActionResult GetChartOrg(int subActId)
+        {
+            try
+            {
+                return Ok(this._workFlowRepository.GetChartOrg(subActId));
+            }
+            catch (Exception ex)
+            {
+                _ilogger.LogError(ex.Message);
+                return null;
             }
         }
 

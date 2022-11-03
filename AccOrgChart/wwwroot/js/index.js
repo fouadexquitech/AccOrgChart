@@ -47,20 +47,14 @@ var datascource = {
         }
     ]
 };
-$(document).ready(function () {
 
-    roles.forEach(el => {
-        $('#ddlRoles').append('<option value="' + el.id + '">' + el.name + '</option>');
-    });
-
-    tasks.forEach(el => {
-        $('#ddlTasks').append('<option value="' + el.id + '">' + el.name + '</option>');
-    });
- 
+function buildChart() {
+    let subActId = $('#ddlSubActivities').val();
+    var ajaxUrl = '/WorkFlow/GetChartOrg?subActId=' + subActId;
     var oc = $('#chart-container').orgchart({
-        'data': datascource,
-        'nodeTitle' : 'role',
-        'nodeContent': 'task',
+        'data': ajaxUrl,
+        'nodeTitle': 'roleName',
+        'nodeContent': 'taskName',
         'nodeID': 'id',
         'parentNodeSymbol': '',
         'draggable': true,
@@ -72,16 +66,17 @@ $(document).ready(function () {
         },
         'createNode': function (node, data) {
             $(node).dblclick(function () {
-                
+
                 $('#spanModalContentTitle').text(data.role);
                 $('#ddlRoles').val(data.roleId);
-                $('#ddlTasks').val(data.taskId);
-                $('#txtTaskDesc').val(data.task);
+                getTasks(subActId, data.taskId);
+                $('#txtTaskDesc').val(data.taskName);
                 $('#modalContent').modal('show');
-                
+
             });
 
         }
+
     });
 
     oc.$chart.on('nodedrop.orgchart', function (event, extraParams) {
@@ -89,7 +84,44 @@ $(document).ready(function () {
             + ', dragZone:' + extraParams.dragZone.children('.title').text()
             + ', dropZone:' + extraParams.dropZone.children('.title').text()
         );
+
+        let id = extraParams.draggedNode[0].id;
+        let oldParentId = extraParams.draggedNode[0].getAttribute('data-parent');
+        let newParentId = extraParams.dropZone[0].id;
+
+        $.ajax({
+            'url': '/WorkFlow/UpdateWorkFlowParentId?wfId=' + id + '&parentId=' + newParentId,
+            'dataType': 'json'
+        })
+            .done(function (data, textStatus, jqXHR) {
+                $('#chart-container').empty();
+                // build the org-chart
+                var $chartContainer = this.$chartContainer;
+                if (this.$chart) {
+                    this.$chart.remove();
+                }
+                buildChart();
+            })
+            .fail(function (jqXHR, textStatus, errorThrown) {
+                console.log(errorThrown);
+            })
+            
+
+       
     });
+
+}
+
+
+$(document).ready(function () {
+
+    roles.forEach(el => {
+        $('#ddlRoles').append('<option value="' + el.id + '">' + el.name + '</option>');
+    });
+
+    
+    getSubActivities();
+    
 
 });
 
@@ -104,4 +136,61 @@ function changeTaskDesc(sender) {
 
 function onTaskChange(sender) {
     $('#txtTaskDesc').val(sender.options[sender.selectedIndex].text);
+}
+
+function getSubActivities() {
+    $.ajax({
+        'url': '/Activities/GetSubActivities',
+        'dataType': 'json'
+    })
+        .done(function (data, textStatus, jqXHR) {
+            let $select = $('#ddlSubActivities');
+            if ($select) {
+                $select.append('<option value="0"></option>')
+                data.forEach(el => {
+                    $select.append('<option value="' + el.sacSeq + '">' + el.sacDesc + '</option>');
+                });
+
+            }
+        })
+        .fail(function (jqXHR, textStatus, errorThrown) {
+            console.log(errorThrown);
+        })
+
+}
+
+function subActivityChange(sender) {
+
+    $('#chart-container').empty();
+    // build the org-chart
+    var $chartContainer = this.$chartContainer;
+    if (this.$chart) {
+        this.$chart.remove();
+    }
+    buildChart();
+}
+
+function getTasks(subActId, selectedTaskId) {
+    $.ajax({
+        'url': '/Activities/GetTasks?subActId=' + subActId,
+        'dataType': 'json'
+    })
+        .done(function (data, textStatus, jqXHR) {
+            let $select = $('#ddlTasks');
+            if ($select) {
+                $select.append('<option value="0"></option>')
+                data.forEach(el => {
+                    
+                    $select.append('<option value="' + el.tskSeq + '">' + el.tskDesc + '</option>');
+                    
+                });
+
+                $select.val(selectedTaskId);
+
+
+            }
+        })
+        .fail(function (jqXHR, textStatus, errorThrown) {
+            console.log(errorThrown);
+        })
 }
