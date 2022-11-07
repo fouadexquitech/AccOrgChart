@@ -9,7 +9,7 @@ namespace AccOrgChart.Repository.Interfaces
         public bool AddWorkFlow(WorkFlow wf);
         public bool UpdateWorkFlowParentId(int wfId, int parentId);
 
-        public bool UpdateWorkFlow(int wfId, int taskId, int roleId, int parentId);
+        public bool UpdateWorkFlow(int wfId, int taskId, int roleId, bool updateTask, string newTaskName);
 
         public Node GetChartOrg(int subActId);
     }

@@ -17,6 +17,7 @@ namespace AccOrgChart.Repository.Managers
         public Node? GetChartOrg(int subActId)
         {
             var roles = _dbContext.TblRoles.ToList();
+            var tasks = _dbContext.TblActivityTasks.Where(x => x.SubActId == subActId).ToList();
             var workFlows = (from b in _dbContext.VwJobWorkFlows
                              where b.SubActivityId == subActId
                              select b).ToList();
@@ -29,18 +30,24 @@ namespace AccOrgChart.Repository.Managers
                 mainNode = new Node();
                 mainNode.Id = root.JwId;
                 mainNode.RoleId = root.RoleId;
-
+                mainNode.TaskId = root.TaskId;
                 var role = roles.Where(x => x.RoleId == root.RoleId).FirstOrDefault();
+                var task = tasks.Where(x => x.TskSeq == root.TaskId).FirstOrDefault();
                 if (role != null)
                 {
                     mainNode.RoleName = role?.RoleDesc;
-                    GetChildrenNodes(mainNode, roles, workFlows);
-                }           
+                    
+                }
+                if (task != null)
+                {
+                    mainNode.TaskName = task?.TskDesc;
+                }
+                GetChildrenNodes(mainNode, roles, tasks, workFlows);
             }
             return mainNode;
         }
 
-        private void GetChildrenNodes(Node node, List<TblRole> roles, List<VwJobWorkFlow> workFlows)
+        private void GetChildrenNodes(Node node, List<TblRole> roles, List<TblActivityTask> tasks, List<VwJobWorkFlow> workFlows)
         {
             var childWorkflows = workFlows.Where(x => x.JwParentId == node.Id).ToList();
             var childNodes = new List<Node>();
@@ -52,16 +59,22 @@ namespace AccOrgChart.Repository.Managers
 
                     childNode.Id = workflow.JwId;
                     childNode.RoleId = workflow.RoleId;
-
+                    childNode.TaskId = workflow.TaskId;
                     var role = roles.Where(x => x.RoleId == workflow.RoleId).FirstOrDefault();
+                    var task = tasks.Where(x => x.TskSeq == workflow.TaskId).FirstOrDefault();
                     if (role != null)
                     {
                         childNode.RoleName = role?.RoleDesc;
                     }
+                    if (task != null)
+                    {
+                        childNode.TaskName = task?.TskDesc;
+                    }
+
 
                     childNodes.Add(childNode);
                     node.Children = childNodes;
-                    GetChildrenNodes(childNode, roles, workFlows);
+                    GetChildrenNodes(childNode, roles, tasks, workFlows);
                 }
             }                   
         }
@@ -111,16 +124,34 @@ namespace AccOrgChart.Repository.Managers
             return true;
         }
 
-        public bool UpdateWorkFlow(int wfId,int taskId,int roleId, int parentId)
+        public bool UpdateWorkFlow(int wfId,int taskId,int roleId, bool updateTask, string newTaskName)
         {
-            var result = _dbContext.TblJobWorkFlows.Where(x => x.JwId == wfId).FirstOrDefault();
-            result.JwJobId = roleId;
-            result.JwTaskId = taskId;
-            result.JwParentId = parentId;
-            _dbContext.TblJobWorkFlows.Update(result);
-            _dbContext.SaveChanges();
+            var t = _dbContext.Database.BeginTransaction();
+            try
+            {
+                var result = _dbContext.TblJobWorkFlows.Where(x => x.JwId == wfId).FirstOrDefault();
+                result.JwJobId = roleId;
+                result.JwTaskId = taskId;
+                //result.JwParentId = parentId;
+                _dbContext.TblJobWorkFlows.Update(result);
+                _dbContext.SaveChanges();
 
-            return true;
+                if (updateTask)
+                {
+                    var task = _dbContext.TblActivityTasks.Where(x => x.TskSeq == taskId).FirstOrDefault();
+                    task.TskDesc = newTaskName;
+                    _dbContext.TblActivityTasks.Update(task);
+                    _dbContext.SaveChanges();
+                }
+
+                t.Commit();
+                return true;
+            }
+            catch (Exception ex)
+            {
+                t.Rollback();
+                return false;
+            }
         }
 
     }

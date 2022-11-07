@@ -1,53 +1,5 @@
-﻿var roles = [
-    { id: 1, name: 'Operations Manager (OM)' },
-    { id: 2, name: 'Project Manager (PM)' },
-    { id: 3, name: 'Construction Manager (CM)' },
-    { id: 4, name: 'Contract Manager (CtM)' },
-    { id: 5, name: 'Adm & Fin Manager' },
-    { id: 6, name: 'Chief Accountant' },
-    { id: 7, name: 'Accountant' },
-    { id: 8, name: 'Accounting Clerk' }
-];
-
-var tasks = [
-    { id: 1, name: 'Review and endorse for stamp duties and distribution of original & copies' },
-    { id: 2, name: 'Check wording, stamp duties and distribution of original & copies' },
-    { id: 3, name: 'Receive copy, review and file' },
-    { id: 4, name: 'Handles fiscal stamps. Files Client Contracts with lawyer..' },
-    { id: 5, name: 'Coordinates fiscal stamps payments. Reviews JV (Off B/S account)' },
-    { id: 6, name: 'Creates off B/S account to record full contract value)' },
-    { id: 7, name: 'Files JV' }
-   
-];
-
-
-var datascource = {
-    'id': 1,
-    'roleId' : 1,
-    'role': 'Operations Manager (OM)',
-    'taskId' : 1,
-    'task': 'Review and endorse for stamp duties and distribution of original & copies',
-    'children': [
-        {
-            'id': 2, 'roleId': 2, 'role': 'Project Manager (PM)', 'taskId': 2, 'task': 'Check wording, stamp duties and distribution of original & copies',
-            'children': [{ 'id': 3, 'roleId': 3, 'role': 'Construction Manager (CM)', 'taskId': 3, 'task': 'Receive copy, review and file' }]
-        },
-        {
-            'id': 4, 'roleId': 4, 'role': 'Contract Manager (CtM)', 'taskId': 3, 'task': 'Receive copy, review and file',
-            'children': [
-                { 'id': 5, 'roleId': 5, 'role': 'Adm & Fin Manager', 'taskId': 4, 'task': 'Handles fiscal stamps. Files Client Contracts with lawyer..' },
-                {
-                    'id': 6, 'roleId': 6, 'role': 'Chief Accountant', 'taskId': 5, 'task': 'Coordinates fiscal stamps payments. Reviews JV (Off B/S account)',
-                    'children': [
-                        { 'id': 7, 'roleId': 7, 'role': 'Accountant', 'taskId': 6, 'task': 'Creates off B/S account to record full contract value)' },
-                        { 'id': 8, 'roleId': 8, 'role': 'Accounting Clerk', 'taskId': 7, 'task': 'Files JV' }
-                    ]
-                }
-            ]
-        }
-    ]
-};
-
+﻿
+var selectedWfId = -1;
 function buildChart() {
     let subActId = $('#ddlSubActivities').val();
     var ajaxUrl = '/WorkFlow/GetChartOrg?subActId=' + subActId;
@@ -66,10 +18,13 @@ function buildChart() {
         },
         'createNode': function (node, data) {
             $(node).dblclick(function () {
-
+                resetForm();
+                selectedWfId = data.id;
+                console.log(data);
                 $('#spanModalContentTitle').text(data.role);
                 $('#ddlRoles').val(data.roleId);
                 getTasks(subActId, data.taskId);
+                getRoles(data.roleId);
                 $('#txtTaskDesc').val(data.taskName);
                 $('#modalContent').modal('show');
 
@@ -86,6 +41,7 @@ function buildChart() {
         );
 
         let id = extraParams.draggedNode[0].id;
+        
         let oldParentId = extraParams.draggedNode[0].getAttribute('data-parent');
         let newParentId = extraParams.dropZone[0].id;
 
@@ -113,17 +69,76 @@ function buildChart() {
 }
 
 
+function resetForm() {
+    $('#frmUpdateTask').trigger("reset");
+    $('#chkTask').attr("checked", false);
+    $('#txtTaskDesc').attr("readonly", true);
+}
+
 $(document).ready(function () {
-
-    roles.forEach(el => {
-        $('#ddlRoles').append('<option value="' + el.id + '">' + el.name + '</option>');
-    });
-
-    
     getSubActivities();
-    
+    $.validator.addMethod("requiredSelect", function (value, element) {
+       
+        if (value == null || value == '' || value == '0') {
+            return false;
+        } else {
+            return true;
+        };
+    }, "<span class='text-danger'>Required Field</span>");
 
+    $.validator.addMethod("requiredInput", function (value, element) {
+       
+        if (value == null || value == '') {
+            return false;
+        } else {
+            return true;
+        };
+    }, "<span class='text-danger'>Required Field</span>");
+
+    $("#frmUpdateTask").validate({
+        rules: {
+            ddlRoles: {
+                requiredSelect: true
+               
+            },
+            ddlTasks: {
+                requiredSelect: true,
+               
+            },
+            txtTaskDesc: {
+                requiredInput: true
+            }
+           
+            
+        }
+    });
 });
+
+function submitForm() {
+    if ($("#frmUpdateTask").valid()) {
+        var taskId = $('#ddlTasks').val();
+        roleId = $('#ddlRoles').val();
+        var updateTask = $('#chkTask').prop('checked');
+        var newTaskName = $('#txtTaskDesc').val();
+        $.ajax({
+            'url': '/WorkFlow/UpdateWorkFlow?wfId=' + selectedWfId + '&taskId=' + taskId + '&roleId=' + roleId + '&updateTask=' + updateTask + '&newTaskName=' + newTaskName,
+            'dataType': 'json'
+        })
+            .done(function (data, textStatus, jqXHR) {
+                $('#modalContent').modal('hide');
+                $('#chart-container').empty();
+                // build the org-chart
+                var $chartContainer = this.$chartContainer;
+                if (this.$chart) {
+                    this.$chart.remove();
+                }
+                buildChart();
+            })
+            .fail(function (jqXHR, textStatus, errorThrown) {
+                console.log(errorThrown);
+            });
+    }
+}
 
 function changeTaskDesc(sender) {
     
@@ -138,6 +153,30 @@ function onTaskChange(sender) {
     $('#txtTaskDesc').val(sender.options[sender.selectedIndex].text);
 }
 
+function getRoles(selectedRoleId) {
+    $.ajax({
+        'url': '/Jobs/GetJobsList',
+        'dataType': 'json'
+    })
+        .done(function (data, textStatus, jqXHR) {
+            let $select = $('#ddlRoles');
+           
+            if ($select) {
+                $select.find('option').remove();
+                $select.append('<option value="0"></option>');
+                data.forEach(el => {
+                    $select.append('<option value="' + el.roleId + '">' + el.roleDesc + '</option>');
+                });
+
+                $select.val(selectedRoleId);
+
+            }
+        })
+        .fail(function (jqXHR, textStatus, errorThrown) {
+            console.log(errorThrown);
+        })
+}
+
 function getSubActivities() {
     $.ajax({
         'url': '/Activities/GetSubActivities',
@@ -146,7 +185,7 @@ function getSubActivities() {
         .done(function (data, textStatus, jqXHR) {
             let $select = $('#ddlSubActivities');
             if ($select) {
-                $select.append('<option value="0"></option>')
+                $select.append('<option value="0"></option>');
                 data.forEach(el => {
                     $select.append('<option value="' + el.sacSeq + '">' + el.sacDesc + '</option>');
                 });
@@ -178,6 +217,7 @@ function getTasks(subActId, selectedTaskId) {
         .done(function (data, textStatus, jqXHR) {
             let $select = $('#ddlTasks');
             if ($select) {
+                $select.find('option').remove();
                 $select.append('<option value="0"></option>')
                 data.forEach(el => {
                     

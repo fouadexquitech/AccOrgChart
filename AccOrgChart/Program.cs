@@ -23,6 +23,7 @@ builder.Services.AddDbContext<HR_StatisticsDbContext>(opts => opts.UseSqlServer(
 builder.Services.AddTransient<IActivitiesRepository, ActivitiesRepository>();
 builder.Services.AddTransient<ICodesRepository, CodesRepository>();
 builder.Services.AddTransient<IWorkFlowRepository, WorkFlowRepository>();
+builder.Services.AddTransient<IJobsRepository, JobsRepository>();
 
 var app = builder.Build();
 
