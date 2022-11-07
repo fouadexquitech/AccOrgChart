@@ -34,15 +34,10 @@ namespace AccOrgChart.Repository.Managers
                 if (role != null)
                 {
                     mainNode.RoleName = role?.RoleDesc;
-
                     GetChildrenNodes(mainNode, roles, workFlows);
-                }
-                
+                }           
             }
-
             return mainNode;
-
-
         }
 
         private void GetChildrenNodes(Node node, List<TblRole> roles, List<VwJobWorkFlow> workFlows)
@@ -68,12 +63,7 @@ namespace AccOrgChart.Repository.Managers
                     node.Children = childNodes;
                     GetChildrenNodes(childNode, roles, workFlows);
                 }
-
-
-            }
-            
-           
-
+            }                   
         }
 
 
