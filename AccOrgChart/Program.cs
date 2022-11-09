@@ -24,7 +24,9 @@ builder.Services.AddTransient<IActivitiesRepository, ActivitiesRepository>();
 builder.Services.AddTransient<ICodesRepository, CodesRepository>();
 builder.Services.AddTransient<IWorkFlowRepository, WorkFlowRepository>();
 builder.Services.AddTransient<IJobsRepository, JobsRepository>();
-
+builder.Services.AddControllers().AddNewtonsoftJson(options =>
+    options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
+);
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
