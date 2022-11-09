@@ -79,6 +79,20 @@ namespace AccOrgChart.Controllers
 
 
         #region "Activity"
+
+        public List<TblActivity> GetActivities()
+        {
+            try
+            {
+                return this._activitiesRepository.GetActivities();
+            }
+            catch (Exception ex)
+            {
+                _ilogger.LogError(ex.Message);
+                return null;
+            }
+        }
+
         public List<TblActivity> GetActivity(int id)
         {
             try
@@ -189,11 +203,11 @@ namespace AccOrgChart.Controllers
 
 
         #region "Task"
-        public List<TblActivityTask> GetTasks(int subActId)
+        public List<TblActivityTask> GetTasks(int actId, int subActId)
         {
             try
             {
-                return this._activitiesRepository.GetTasks(subActId);
+                return this._activitiesRepository.GetTasks( actId, subActId);
             }
             catch (Exception ex)
             {

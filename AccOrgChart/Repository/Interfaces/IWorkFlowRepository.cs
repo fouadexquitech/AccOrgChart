@@ -12,5 +12,6 @@ namespace AccOrgChart.Repository.Interfaces
         public bool UpdateWorkFlow(int wfId, int taskId, int roleId, bool updateTask, string newTaskName);
 
         public Node GetChartOrg(int subActId);
+        public Node GetChartOrgActivity(int actId);
     }
 }

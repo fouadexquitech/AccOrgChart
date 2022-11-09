@@ -7,13 +7,16 @@
  <style type="text/css">
    
     .orgchart { background: #fff; }
+</style>
 
-   
-  </style>
+<div class="text-center">
+    <label>Activity</label>
+    <select class="form-select" id="ddlActivities" onchange="activityChange(this)"></select>
+</div>
   <div class="text-center">
       <label>Sub-Activity</label>
-      <select class="form-select" id="ddlSubActivities" onchange="subActivityChange(this)"></select>
-</div>
+      <select class="form-select" id="ddlSubActivities" onchange="activityChange(this)"></select>
+  </div>
 <hr />
 
 <div class="text-center">

@@ -1,8 +1,23 @@
 ﻿
 var selectedWfId = -1;
 function buildChart() {
-    let subActId = $('#ddlSubActivities').val();
-    var ajaxUrl = '/WorkFlow/GetChartOrg?subActId=' + subActId;
+    let actId = 0;
+    let subActId = 0;
+
+    if ($('#ddlActivities').val() >0) {
+        actId = $('#ddlActivities').val();
+        subActId = 0;
+        var ajaxUrl = '/WorkFlow/GetChartOrgActivity?actId=' + actId;
+        //var ajaxUrl = '/WorkFlow/GetChartOrg?actId=' + actId + '?subActId=' + subActId;
+    }
+    else
+    {
+        actId = 0;
+        subActId = $('#ddlSubActivities').val();
+        var ajaxUrl = '/WorkFlow/GetChartOrg?subActId=' + subActId;
+    }
+
+
     var oc = $('#chart-container').orgchart({
         'data': ajaxUrl,
         'nodeTitle': 'roleName',
@@ -23,7 +38,7 @@ function buildChart() {
                 console.log(data);
                 $('#spanModalContentTitle').text(data.role);
                 $('#ddlRoles').val(data.roleId);
-                getTasks(subActId, data.taskId);
+                getTasks(actId,subActId, data.taskId);
                 getRoles(data.roleId);
                 $('#txtTaskDesc').val(data.taskName);
                 $('#modalContent').modal('show');
@@ -56,7 +71,9 @@ function buildChart() {
                 if (this.$chart) {
                     this.$chart.remove();
                 }
-                buildChart();
+                
+                 buildChart();
+   
             })
             .fail(function (jqXHR, textStatus, errorThrown) {
                 console.log(errorThrown);
@@ -76,6 +93,7 @@ function resetForm() {
 }
 
 $(document).ready(function () {
+    getActivities();
     getSubActivities();
     $.validator.addMethod("requiredSelect", function (value, element) {
        
@@ -189,13 +207,11 @@ function getSubActivities() {
                 data.forEach(el => {
                     $select.append('<option value="' + el.sacSeq + '">' + el.sacDesc + '</option>');
                 });
-
             }
         })
         .fail(function (jqXHR, textStatus, errorThrown) {
             console.log(errorThrown);
         })
-
 }
 
 function subActivityChange(sender) {
@@ -209,9 +225,45 @@ function subActivityChange(sender) {
     buildChart();
 }
 
-function getTasks(subActId, selectedTaskId) {
+
+
+function getActivities() {
     $.ajax({
-        'url': '/Activities/GetTasks?subActId=' + subActId,
+        'url': '/Activities/GetActivities',
+        'dataType': 'json'
+    })
+        .done(function (data, textStatus, jqXHR) {
+            let $select = $('#ddlActivities');
+            if ($select) {
+                $select.append('<option value="0"></option>');
+                data.forEach(el => {
+                    $select.append('<option value="' + el.actSeq + '">' + el.actDesc + '</option>');
+                });
+
+            }
+        })
+        .fail(function (jqXHR, textStatus, errorThrown) {
+            console.log(errorThrown);
+        })
+}
+
+
+
+function activityChange(sender) {
+
+    $('#chart-container').empty();
+    // build the org-chart
+    var $chartContainer = this.$chartContainer;
+    if (this.$chart) {
+        this.$chart.remove();
+    }
+    buildChart();
+}
+
+
+function getTasks(actId,subActId, selectedTaskId) {
+    $.ajax({
+        'url': '/Activities/GetTasks?actId='+ actId + '?subActId=' + subActId,
         'dataType': 'json'
     })
         .done(function (data, textStatus, jqXHR) {
@@ -226,8 +278,6 @@ function getTasks(subActId, selectedTaskId) {
                 });
 
                 $select.val(selectedTaskId);
-
-
             }
         })
         .fail(function (jqXHR, textStatus, errorThrown) {

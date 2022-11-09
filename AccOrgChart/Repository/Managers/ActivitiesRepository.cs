@@ -98,7 +98,12 @@ namespace AccOrgChart.Repository.Managers
         #endregion
 
 
-#region "Activity"
+        #region "Activities"
+        public List<TblActivity> GetActivities()
+        {
+           return _StatisticsDbContext.TblActivities.OrderBy(x => x.ActDesc).ToList(); ;
+        }
+
         public List<TblActivity> GetActivity(int id)
         {
             var result = new List<TblActivity>();
@@ -222,17 +227,29 @@ namespace AccOrgChart.Repository.Managers
 
 
         #region "ActivityTask"
-        public List<TblActivityTask> GetTasks(int subActId)
+        public List<TblActivityTask> GetTasks(int actId,int subActId)
         {
             var result = new List<TblActivityTask>();
 
-            if (subActId > 0)
-                result = _StatisticsDbContext.TblActivityTasks.OrderBy(x => x.TskDesc).Where(x => x.SubActId == subActId).ToList();
+            if (actId > 0)
+            {
+                result = (from b in _StatisticsDbContext.TblActivities
+                          join c in _StatisticsDbContext.TblActivitySubs on b.ActSeq equals c.ActId
+                          join t in _StatisticsDbContext.TblActivityTasks on c.SacSeq equals t.SubActId
+                          where b.ActSeq == actId
+                          select t).ToList();
+            }
             else
-                result = _StatisticsDbContext.TblActivityTasks.OrderBy(x => x.TskDesc).ToList();
+            {
+                if (subActId > 0)
+                    result = _StatisticsDbContext.TblActivityTasks.OrderBy(x => x.TskDesc).Where(x => x.SubActId == subActId).ToList();
+                else
+                    result = _StatisticsDbContext.TblActivityTasks.OrderBy(x => x.TskDesc).ToList();
+            }
 
             return result;
         }
+
 
         public bool UpdateTaskDesc(ActivityTask act)
         {
@@ -248,6 +265,7 @@ namespace AccOrgChart.Repository.Managers
             else
                 return false;
         }
+
 
         public bool UpdateTask(ActivityTask act)
         {

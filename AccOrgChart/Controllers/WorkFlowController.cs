@@ -75,7 +75,20 @@ namespace AccOrgChart.Controllers
         {
             try
             {
-                return Ok(this._workFlowRepository.GetChartOrg(subActId));
+                return Ok(this._workFlowRepository.GetChartOrg(  subActId));
+            }
+            catch (Exception ex)
+            {
+                _ilogger.LogError(ex.Message);
+                return null;
+            }
+        }
+
+        public IActionResult GetChartOrgActivity(int actId)
+        {
+            try
+            {
+                return Ok(this._workFlowRepository.GetChartOrgActivity(actId));
             }
             catch (Exception ex)
             {
