@@ -162,9 +162,7 @@ function changeTaskDesc(sender) {
     
     let checked = $(sender).prop('checked');
     
-    $('#txtTaskDesc').prop('readonly', !checked);
-    
-
+    $('#txtTaskDesc').prop('readonly', !checked)
 }
 
 function onTaskChange(sender) {
