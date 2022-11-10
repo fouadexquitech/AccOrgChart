@@ -4,8 +4,6 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.EntityFrameworkCore;
 
-#nullable disable
-
 namespace AccOrgChart.Repository.Models.HR_StatisticsModels
 {
     [Table("tblActivitySub")]
@@ -19,10 +17,12 @@ namespace AccOrgChart.Repository.Models.HR_StatisticsModels
         public int ActId { get; set; }
         [Column("sacCode")]
         [StringLength(50)]
-        public string SacCode { get; set; }
+        [Unicode(false)]
+        public string? SacCode { get; set; }
         [Column("sacDesc")]
         [StringLength(500)]
-        public string SacDesc { get; set; }
+        [Unicode(false)]
+        public string? SacDesc { get; set; }
         [Column("sacSort")]
         public int? SacSort { get; set; }
     }

@@ -4,12 +4,10 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.EntityFrameworkCore;
 
-#nullable disable
-
 namespace AccOrgChart.Repository.Models.HR_StatisticsModels
 {
     [Table("tblJobWorkFlow")]
-    [Index(nameof(JwJobId), nameof(JwTaskId), Name = "IX_tblJobWorkFlow", IsUnique = true)]
+    [Index("JwJobId", "JwTaskId", Name = "IX_tblJobWorkFlow", IsUnique = true)]
     public partial class TblJobWorkFlow
     {
         [Key]
@@ -27,13 +25,16 @@ namespace AccOrgChart.Repository.Models.HR_StatisticsModels
         public int? JwComplexityLevel { get; set; }
         [Column("jwWorkFlowRoleCode")]
         [StringLength(50)]
-        public string JwWorkFlowRoleCode { get; set; }
+        [Unicode(false)]
+        public string? JwWorkFlowRoleCode { get; set; }
         [Column("jwWorkFlowCode")]
         [StringLength(50)]
-        public string JwWorkFlowCode { get; set; }
+        [Unicode(false)]
+        public string? JwWorkFlowCode { get; set; }
         [Column("jwSubWorkFlowCode")]
         [StringLength(50)]
-        public string JwSubWorkFlowCode { get; set; }
+        [Unicode(false)]
+        public string? JwSubWorkFlowCode { get; set; }
         [Column("jwJobCompetencyLevel")]
         public int? JwJobCompetencyLevel { get; set; }
         [Column("jwCompetencyRef")]
@@ -48,14 +49,19 @@ namespace AccOrgChart.Repository.Models.HR_StatisticsModels
         public DateTime? InsertedDate { get; set; }
         [Column("jwSort")]
         [StringLength(50)]
-        public string JwSort { get; set; }
+        [Unicode(false)]
+        public string? JwSort { get; set; }
         [StringLength(50)]
-        public string InsertedBy { get; set; }
+        [Unicode(false)]
+        public string? InsertedBy { get; set; }
         [StringLength(50)]
-        public string UpdatedBy { get; set; }
+        [Unicode(false)]
+        public string? UpdatedBy { get; set; }
         [Column(TypeName = "datetime")]
         public DateTime? UpdatedDate { get; set; }
         [Column("jwParentId")]
         public int? JwParentId { get; set; }
+        [Column("jwParentSubActivity")]
+        public int? JwParentSubActivity { get; set; }
     }
 }

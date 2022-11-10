@@ -4,8 +4,6 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.EntityFrameworkCore;
 
-#nullable disable
-
 namespace AccOrgChart.Repository.Models.HR_StatisticsModels
 {
     [Table("TblCode")]
@@ -20,13 +18,14 @@ namespace AccOrgChart.Repository.Models.HR_StatisticsModels
         [Column("codNum")]
         public int? CodNum { get; set; }
         [Column("codDesc")]
-        public string CodDesc { get; set; }
+        [Unicode(false)]
+        public string? CodDesc { get; set; }
         [Column("codAbv")]
         [StringLength(100)]
-        public string CodAbv { get; set; }
+        public string? CodAbv { get; set; }
         [Column("LUser")]
         [StringLength(10)]
-        public string Luser { get; set; }
+        public string? Luser { get; set; }
         [Column("LDate", TypeName = "datetime")]
         public DateTime? Ldate { get; set; }
         [Column("codColNo")]
@@ -36,7 +35,7 @@ namespace AccOrgChart.Repository.Models.HR_StatisticsModels
         public DateTime? LastUpdate { get; set; }
         [Column("codSpecialFilter")]
         [StringLength(50)]
-        public string CodSpecialFilter { get; set; }
+        public string? CodSpecialFilter { get; set; }
         [Column("codAuxiliaryCost")]
         public byte? CodAuxiliaryCost { get; set; }
         [Column("codCategory")]

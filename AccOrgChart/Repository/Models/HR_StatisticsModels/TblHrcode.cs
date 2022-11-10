@@ -4,8 +4,6 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.EntityFrameworkCore;
 
-#nullable disable
-
 namespace AccOrgChart.Repository.Models.HR_StatisticsModels
 {
     [Keyless]
@@ -17,9 +15,10 @@ namespace AccOrgChart.Repository.Models.HR_StatisticsModels
         public int? CodType { get; set; }
         [Column("codGrp")]
         [StringLength(50)]
-        public string CodGrp { get; set; }
+        [Unicode(false)]
+        public string? CodGrp { get; set; }
         [Column("codDescE")]
         [StringLength(100)]
-        public string CodDescE { get; set; }
+        public string? CodDescE { get; set; }
     }
 }

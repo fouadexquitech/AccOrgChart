@@ -199,6 +199,32 @@ namespace AccOrgChart.Controllers
                 return false;
             }
         }
+
+        public bool AddSubActivity(int ActivityId,string SubActivityDesc)
+        {
+            try
+            {
+                return this._activitiesRepository.AddSubActivity(ActivityId, SubActivityDesc);
+            }
+            catch (Exception ex)
+            {
+                _ilogger.LogError(ex.Message);
+                return false;
+            }
+        }
+
+        public bool EditSubActivity(int subActivityId, string subActivityDesc)
+        {
+            try
+            {
+                return this._activitiesRepository.EditSubActivity(subActivityId, subActivityDesc);
+            }
+            catch (Exception ex)
+            {
+                _ilogger.LogError(ex.Message);
+                return false;
+            }
+        }
         #endregion
 
 

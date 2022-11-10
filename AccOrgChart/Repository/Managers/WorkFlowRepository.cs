@@ -2,6 +2,7 @@
 using AccOrgChart.Repository.Models.HR_StatisticsModels;
 using AccOrgChart.Repository.View_Models;
 using System;
+using System.Threading.Tasks;
 
 
 namespace AccOrgChart.Repository.Managers
@@ -15,43 +16,61 @@ namespace AccOrgChart.Repository.Managers
             _dbContext = dbContext;
         }
 
-        public Node? GetChartOrg(int subActId)
-        {
-            return GetChartOrg(0, subActId);
-        }
 
         public Node? GetChartOrgActivity(int actId)
-        {
-            return GetChartOrg( actId, 0);
-        }
-        public Node? GetChartOrg(int actId, int subActId)
         {
             try
             {
                 var roles = _dbContext.TblRoles.ToList();
 
-                var tasks = new List<TblActivityTask>();
-                var workFlows = new List<VwJobWorkFlow>();
-
-                if (actId > 0)
-                {
-                    tasks = (from b in _dbContext.TblActivities
+                var tasks = (from b in _dbContext.TblActivities
                              join c in _dbContext.TblActivitySubs on b.ActSeq equals c.ActId
                              join t in _dbContext.TblActivityTasks on c.SacSeq equals t.SubActId
                              where b.ActSeq == actId
                              select t).ToList();
 
-                    workFlows = (from b in _dbContext.VwJobWorkFlows
-                                 where b.ActivityId == actId
-                                 select b).ToList();
-                }
-                else
+                var root = _dbContext.TblActivities.Where(x => x.ActSeq == actId).FirstOrDefault();
+               
+                var subActs = (from b in _dbContext.TblActivities
+                                     join c in _dbContext.TblActivitySubs on b.ActSeq equals c.ActId
+                                     where b.ActSeq == actId
+                                     select c).ToList();
+
+                Node? mainNode = null;
+                if (root != null)
                 {
-                    tasks = _dbContext.TblActivityTasks.Where(x => x.SubActId == subActId).ToList();
-                    workFlows = (from b in _dbContext.VwJobWorkFlows
+                    mainNode = new Node();
+                    mainNode.Id = root.ActSeq;
+                    mainNode.RoleId = 0;                
+                    mainNode.RoleName = root.ActDesc;
+                    mainNode.TaskId = 0;
+                    mainNode.TaskName = "Activity";
+                    mainNode.Type = 1;
+
+                    GetSubActChildrenNodes(mainNode, roles, tasks, subActs);
+
+                    //GetChildrenNodes(mainNode, roles, tasks, workFlows);
+                }
+                return mainNode;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+
+        public Node? GetChartOrgSubActivity(int subActId)
+        {
+            try
+            {
+                var roles = _dbContext.TblRoles.ToList();
+
+                var tasks = _dbContext.TblActivityTasks.Where(x => x.SubActId == subActId).ToList();
+
+                var workFlows = (from b in _dbContext.VwJobWorkFlows
                                  where b.SubActivityId == subActId
                                  select b).ToList();
-                }
 
                 var root = workFlows.Where(x => x.JwParentId == null).FirstOrDefault();
 
@@ -64,17 +83,16 @@ namespace AccOrgChart.Repository.Managers
                     mainNode.TaskId = root.TaskId;
                     var role = roles.Where(x => x.RoleId == root.RoleId).FirstOrDefault();
                     var task = tasks.Where(x => x.TskSeq == root.TaskId).FirstOrDefault();
+                    mainNode.Type = 1;
                     if (role != null)
                     {
                         mainNode.RoleName = role?.RoleDesc;
-
                     }
                     if (task != null)
                     {
                         mainNode.TaskName = task?.TskDesc;
                     }
-                    var i = 0;
-                    GetChildrenNodes(mainNode, roles, tasks, workFlows, i);
+                    GetChildrenNodes(mainNode, roles, tasks, workFlows, 1);
                 }
                 return mainNode;
             }
@@ -84,17 +102,49 @@ namespace AccOrgChart.Repository.Managers
             }
         }
 
-        private void GetChildrenNodes(Node node, List<TblRole> roles, List<TblActivityTask> tasks, List<VwJobWorkFlow> workFlows, int count)
+        private void GetSubActChildrenNodes(Node node, List<TblRole> roles, List<TblActivityTask> tasks,  List<TblActivitySub> subActs)
         {
-            var childWorkflows = workFlows.Where(x => x.JwParentId == node.Id).ToList();
+            var childSubActivities = subActs;
+            var childNodes = new List<Node>();
+
+            if (childSubActivities != null)
+            {
+                foreach (var subAct in childSubActivities)
+                {
+                    var childNode = new Node();
+
+                    childNode.Id = subAct.SacSeq;
+                    childNode.RoleId = 0;                
+                    childNode.RoleName = subAct.SacDesc;
+                    childNode.TaskId = 0;
+                    childNode.TaskName = "Sub-Activity";
+                    childNode.Type = 2;
+
+                    childNodes.Add(childNode);
+                    node.Children = childNodes;
+
+                    var workFlows = (from b in _dbContext.VwJobWorkFlows
+                                     where b.SubActivityId == subAct.SacSeq
+                                     select b).ToList();
+                    var i = 0;
+                    GetChildrenNodes(childNode, roles, tasks, workFlows,i);
+                }
+            }
+        }
+
+
+        private void GetChildrenNodes(Node node, List<TblRole> roles, List<TblActivityTask> tasks, List<VwJobWorkFlow> workFlows,int i)
+        {
+            var childWorkflows=new List<VwJobWorkFlow>();
+
+            if (i==0)
+                childWorkflows = workFlows.Where(x => x.SubActivityId == node.Id && x?.JwParentId == null).ToList();
+            else
+                childWorkflows = workFlows.Where(x => x.JwParentId == node.Id).ToList();
+
             var childNodes = new List<Node>();
             if (childWorkflows != null)
             {
-                count++;
-                if (count > 30)
-                {
-                    var maxNode = node;
-                }
                 foreach (var workflow in childWorkflows)
                 {
                     var childNode = new Node();
@@ -113,10 +163,12 @@ namespace AccOrgChart.Repository.Managers
                         childNode.TaskName = task?.TskDesc;
                     }
 
+                    childNode.Type = 3;
 
                     childNodes.Add(childNode);
                     node.Children = childNodes;
-                    GetChildrenNodes(childNode, roles, tasks, workFlows, count);
+                    i++;
+                    GetChildrenNodes(childNode, roles, tasks, workFlows,i);
                 }
             }                   
         }
@@ -148,6 +200,21 @@ namespace AccOrgChart.Repository.Managers
             if (result == null)
             {
                 var newWf = new TblJobWorkFlow { JwTaskId = wf.TaskId, JwJobId = wf.RoleId, JwParentId = wf.wfParentId };
+                _dbContext.Add<TblJobWorkFlow>(newWf);
+                _dbContext.SaveChanges();
+                return true;
+            }
+            else
+                return false;
+        }
+
+        public bool AddWorkflowToSubActivity(int SubActivityId, int TaskId,int RoleId)
+        {
+            var result = _dbContext.TblJobWorkFlows.Where(x => x.JwTaskId == TaskId && x.JwJobId == RoleId).FirstOrDefault();
+
+            if (result == null)
+            {
+                var newWf = new TblJobWorkFlow { JwTaskId = TaskId, JwJobId = RoleId, JwParentSubActivity = SubActivityId };
                 _dbContext.Add<TblJobWorkFlow>(newWf);
                 _dbContext.SaveChanges();
                 return true;

@@ -4,12 +4,10 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.EntityFrameworkCore;
 
-#nullable disable
-
 namespace AccOrgChart.Repository.Models.HR_StatisticsModels
 {
     [Table("tblCompetencyGroup")]
-    [Index(nameof(ComgDesc), Name = "IX_tblCompetencyGroup", IsUnique = true)]
+    [Index("ComgDesc", Name = "IX_tblCompetencyGroup", IsUnique = true)]
     public partial class TblCompetencyGroup
     {
         [Key]
@@ -17,6 +15,7 @@ namespace AccOrgChart.Repository.Models.HR_StatisticsModels
         public int ComgId { get; set; }
         [Column("comgDesc")]
         [StringLength(500)]
-        public string ComgDesc { get; set; }
+        [Unicode(false)]
+        public string? ComgDesc { get; set; }
     }
 }

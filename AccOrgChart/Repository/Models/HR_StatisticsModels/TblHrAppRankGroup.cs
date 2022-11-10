@@ -4,8 +4,6 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.EntityFrameworkCore;
 
-#nullable disable
-
 namespace AccOrgChart.Repository.Models.HR_StatisticsModels
 {
     [Table("tblHrAppRankGroup")]
@@ -16,7 +14,8 @@ namespace AccOrgChart.Repository.Models.HR_StatisticsModels
         [Key]
         [Column("grpDesc")]
         [StringLength(20)]
-        public string GrpDesc { get; set; }
+        [Unicode(false)]
+        public string GrpDesc { get; set; } = null!;
         [Column("grpAppFrom")]
         public int? GrpAppFrom { get; set; }
         [Column("grpAppTo")]

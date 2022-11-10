@@ -11,5 +11,8 @@
         public string? TaskName { get; set; }
 
         public List<Node>? Children { get; set; }
+
+        public int? Type { get; set; }
+
     }
 }

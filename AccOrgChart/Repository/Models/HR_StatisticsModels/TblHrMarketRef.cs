@@ -4,8 +4,6 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.EntityFrameworkCore;
 
-#nullable disable
-
 namespace AccOrgChart.Repository.Models.HR_StatisticsModels
 {
     [Table("tblHrMarketRef")]
@@ -14,7 +12,8 @@ namespace AccOrgChart.Repository.Models.HR_StatisticsModels
         [Key]
         [Column("mrCarrer")]
         [StringLength(150)]
-        public string MrCarrer { get; set; }
+        [Unicode(false)]
+        public string MrCarrer { get; set; } = null!;
         [Key]
         [Column("mrLevel")]
         public byte MrLevel { get; set; }

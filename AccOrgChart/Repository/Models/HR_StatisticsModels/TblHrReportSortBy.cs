@@ -4,8 +4,6 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.EntityFrameworkCore;
 
-#nullable disable
-
 namespace AccOrgChart.Repository.Models.HR_StatisticsModels
 {
     [Table("tblHrReportSortBy")]
@@ -17,8 +15,10 @@ namespace AccOrgChart.Repository.Models.HR_StatisticsModels
         [Key]
         public byte SortSeq { get; set; }
         [StringLength(30)]
-        public string SortDesc { get; set; }
+        [Unicode(false)]
+        public string? SortDesc { get; set; }
         [StringLength(100)]
-        public string SortValue { get; set; }
+        [Unicode(false)]
+        public string? SortValue { get; set; }
     }
 }

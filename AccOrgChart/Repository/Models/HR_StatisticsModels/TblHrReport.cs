@@ -4,8 +4,6 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.EntityFrameworkCore;
 
-#nullable disable
-
 namespace AccOrgChart.Repository.Models.HR_StatisticsModels
 {
     [Table("tblHrReports")]
@@ -16,10 +14,12 @@ namespace AccOrgChart.Repository.Models.HR_StatisticsModels
         public short RptSeq { get; set; }
         [Column("rptDesc")]
         [StringLength(255)]
-        public string RptDesc { get; set; }
+        [Unicode(false)]
+        public string? RptDesc { get; set; }
         [Column("rptObject")]
         [StringLength(30)]
-        public string RptObject { get; set; }
+        [Unicode(false)]
+        public string? RptObject { get; set; }
         [Column("rptHasColumns")]
         public byte? RptHasColumns { get; set; }
         public byte? PermissionExcept { get; set; }

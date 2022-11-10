@@ -45,6 +45,21 @@ namespace AccOrgChart.Controllers
             }
         }
 
+
+        public bool AddWorkflowToSubActivity(int SubActivityId, int TaskId, int RoleId)
+        {
+            try
+            {
+                return this._workFlowRepository.AddWorkflowToSubActivity(SubActivityId,  TaskId,  RoleId);
+            }
+            catch (Exception ex)
+            {
+                _ilogger.LogError(ex.Message);
+                return false;
+            }
+        }
+
+
         public bool UpdateWorkFlowParentId(int wfId, int parentId)
         {
             try
@@ -71,11 +86,11 @@ namespace AccOrgChart.Controllers
             }
         }
 
-        public IActionResult GetChartOrg(int subActId)
+        public IActionResult GetChartOrgSubActivity(int subActId)
         {
             try
             {
-                return Ok(this._workFlowRepository.GetChartOrg(  subActId));
+                return Ok(this._workFlowRepository.GetChartOrgSubActivity(  subActId));
             }
             catch (Exception ex)
             {
@@ -83,6 +98,7 @@ namespace AccOrgChart.Controllers
                 return null;
             }
         }
+
 
         public IActionResult GetChartOrgActivity(int actId)
         {

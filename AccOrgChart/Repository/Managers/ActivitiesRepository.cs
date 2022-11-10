@@ -221,6 +221,37 @@ namespace AccOrgChart.Repository.Managers
             else
                 return false;
         }
+
+
+        public bool AddSubActivity(int ActivityId, string SubActivityDesc)
+        {
+            var activity = _StatisticsDbContext.TblActivitySubs.Where(x => x.SacDesc == SubActivityDesc && x.ActId == ActivityId).FirstOrDefault();
+
+            if (activity == null)
+            {
+                var result = new TblActivitySub { SacDesc = SubActivityDesc, ActId = ActivityId };
+                _StatisticsDbContext.Add<TblActivitySub>(result);
+                _StatisticsDbContext.SaveChanges();
+                return true;
+            }
+            else
+                return false;
+        }
+
+        public bool EditSubActivity(int subActivityId,string subActivityDesc)
+        {
+            var result = _StatisticsDbContext.TblActivitySubs.Where(x => x.SacSeq == subActivityId).FirstOrDefault();
+            result.SacDesc = subActivityDesc;
+
+            if (result != null)
+            {
+                _StatisticsDbContext.TblActivitySubs.Update(result);
+                _StatisticsDbContext.SaveChanges();
+                return true;
+            }
+            else
+                return false;
+        }
         #endregion
 
 

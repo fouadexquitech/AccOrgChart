@@ -4,8 +4,6 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.EntityFrameworkCore;
 
-#nullable disable
-
 namespace AccOrgChart.Repository.Models.HR_StatisticsModels
 {
     [Table("tmpHrAppraisal")]
@@ -14,7 +12,8 @@ namespace AccOrgChart.Repository.Models.HR_StatisticsModels
         [Key]
         [Column("Empl number")]
         [StringLength(10)]
-        public string EmplNumber { get; set; }
+        [Unicode(false)]
+        public string EmplNumber { get; set; } = null!;
         [Column("Ranking 2011")]
         public double? Ranking2011 { get; set; }
         [Column("Ranking 2012")]

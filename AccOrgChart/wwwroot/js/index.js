@@ -1,20 +1,18 @@
-﻿
-var selectedWfId = -1;
+﻿var selectedWfId = -1;
 function buildChart() {
     let actId = 0;
     let subActId = 0;
 
-    if ($('#ddlActivities').val() >0) {
-        actId = $('#ddlActivities').val();
-        subActId = 0;
-        var ajaxUrl = '/WorkFlow/GetChartOrgActivity?actId=' + actId;
-        //var ajaxUrl = '/WorkFlow/GetChartOrg?actId=' + actId + '?subActId=' + subActId;
-    }
-    else
-    {
-        actId = 0;
+    if ($('#ddlSubActivities').val() > 0) {
         subActId = $('#ddlSubActivities').val();
-        var ajaxUrl = '/WorkFlow/GetChartOrg?subActId=' + subActId;
+        var ajaxUrl = '/WorkFlow/GetChartOrgSubActivity?subActId=' + subActId;
+    }
+    else {
+        actId = $('#ddlActivities').val();
+        if (actId > 0)
+            var ajaxUrl = '/WorkFlow/GetChartOrgActivity?actId=' + actId;
+        else
+            return;
     }
 
 
@@ -35,16 +33,30 @@ function buildChart() {
             $(node).dblclick(function () {
                 resetForm();
                 selectedWfId = data.id;
+                var type = data.type;
+
                 console.log(data);
-                $('#spanModalContentTitle').text(data.role);
-                $('#ddlRoles').val(data.roleId);
-                getTasks(actId,subActId, data.taskId);
-                getRoles(data.roleId);
-                $('#txtTaskDesc').val(data.taskName);
-                $('#modalContent').modal('show');
 
+                if (type == 3) //Task
+                {
+                    $('#spanModalContentTitle').text(data.role);
+                    $('#ddlRoles').val(data.roleId);
+                    getTasks(actId, subActId, data.taskId);
+                    getRoles(data.roleId);
+                    $('#txtTaskDesc').val(data.taskName);
+                    $('#modalContent').modal('show');
+                    $('#frmUpdateSubActivity').modal('hide');
+                    $('#frmUpdateTask').modal('show');
+                }
+                else
+                    if (type == 2) //Sub Activity
+                    {
+                        $('#txtSubActivityDesc').val(data.roleName);
+                        $('#modalContent').modal('show');
+                        $('#frmUpdateTask').modal('hide');
+                        $('#frmUpdateSubActivity').modal('show');
+                    }
             });
-
         }
 
     });
@@ -56,7 +68,7 @@ function buildChart() {
         );
 
         let id = extraParams.draggedNode[0].id;
-        
+
         let oldParentId = extraParams.draggedNode[0].getAttribute('data-parent');
         let newParentId = extraParams.dropZone[0].id;
 
@@ -71,18 +83,13 @@ function buildChart() {
                 if (this.$chart) {
                     this.$chart.remove();
                 }
-                
-                 buildChart();
-   
+
+                buildChart();
             })
             .fail(function (jqXHR, textStatus, errorThrown) {
                 console.log(errorThrown);
             })
-            
-
-       
     });
-
 }
 
 
@@ -90,13 +97,17 @@ function resetForm() {
     $('#frmUpdateTask').trigger("reset");
     $('#chkTask').attr("checked", false);
     $('#txtTaskDesc').attr("readonly", true);
+
+    $('#frmUpdateSubActivity').trigger("reset");
+    $('#chkSubActivity').attr("checked", false);
+    $('#txtSubActivityDesc').attr("readonly", true);
 }
 
 $(document).ready(function () {
     getActivities();
     getSubActivities();
     $.validator.addMethod("requiredSelect", function (value, element) {
-       
+
         if (value == null || value == '' || value == '0') {
             return false;
         } else {
@@ -105,7 +116,7 @@ $(document).ready(function () {
     }, "<span class='text-danger'>Required Field</span>");
 
     $.validator.addMethod("requiredInput", function (value, element) {
-       
+
         if (value == null || value == '') {
             return false;
         } else {
@@ -117,17 +128,17 @@ $(document).ready(function () {
         rules: {
             ddlRoles: {
                 requiredSelect: true
-               
+
             },
             ddlTasks: {
                 requiredSelect: true,
-               
+
             },
             txtTaskDesc: {
                 requiredInput: true
             }
-           
-            
+
+
         }
     });
 });
@@ -159,14 +170,17 @@ function submitForm() {
 }
 
 function changeTaskDesc(sender) {
-    
     let checked = $(sender).prop('checked');
-    
     $('#txtTaskDesc').prop('readonly', !checked)
 }
 
 function onTaskChange(sender) {
     $('#txtTaskDesc').val(sender.options[sender.selectedIndex].text);
+}
+
+function changeSubActivityDesc(sender) {
+    let checked = $(sender).prop('checked');
+    $('#txtSubActivityDesc').prop('readonly', !checked)
 }
 
 function getRoles(selectedRoleId) {
@@ -176,7 +190,7 @@ function getRoles(selectedRoleId) {
     })
         .done(function (data, textStatus, jqXHR) {
             let $select = $('#ddlRoles');
-           
+
             if ($select) {
                 $select.find('option').remove();
                 $select.append('<option value="0"></option>');
@@ -185,7 +199,6 @@ function getRoles(selectedRoleId) {
                 });
 
                 $select.val(selectedRoleId);
-
             }
         })
         .fail(function (jqXHR, textStatus, errorThrown) {
@@ -259,9 +272,9 @@ function activityChange(sender) {
 }
 
 
-function getTasks(actId,subActId, selectedTaskId) {
+function getTasks(actId, subActId, selectedTaskId) {
     $.ajax({
-        'url': '/Activities/GetTasks?actId='+ actId + '?subActId=' + subActId,
+        'url': '/Activities/GetTasks?actId=' + actId + '?subActId=' + subActId,
         'dataType': 'json'
     })
         .done(function (data, textStatus, jqXHR) {
@@ -270,9 +283,9 @@ function getTasks(actId,subActId, selectedTaskId) {
                 $select.find('option').remove();
                 $select.append('<option value="0"></option>')
                 data.forEach(el => {
-                    
+
                     $select.append('<option value="' + el.tskSeq + '">' + el.tskDesc + '</option>');
-                    
+
                 });
 
                 $select.val(selectedTaskId);

@@ -4,12 +4,10 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.EntityFrameworkCore;
 
-#nullable disable
-
 namespace AccOrgChart.Repository.Models.HR_StatisticsModels
 {
     [Table("tblVerbs")]
-    [Index(nameof(VerbDesc), Name = "IX_tblVerbs", IsUnique = true)]
+    [Index("VerbDesc", Name = "IX_tblVerbs", IsUnique = true)]
     public partial class TblVerb
     {
         [Key]
@@ -17,6 +15,7 @@ namespace AccOrgChart.Repository.Models.HR_StatisticsModels
         public int VerbId { get; set; }
         [Column("verbDesc")]
         [StringLength(150)]
-        public string VerbDesc { get; set; }
+        [Unicode(false)]
+        public string? VerbDesc { get; set; }
     }
 }
