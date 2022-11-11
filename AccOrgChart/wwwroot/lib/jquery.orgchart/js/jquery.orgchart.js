@@ -1267,13 +1267,22 @@
         });
       }
       // construct the content of node
-      var $nodeDiv = $('<div' + (opts.draggable ? ' draggable="true"' : '') + (data[opts.nodeId] ? ' id="' + data[opts.nodeId] + '"' : '') + (data.parentId ? ' data-parent="' + data.parentId + '"' : '') + '>')
-        .addClass('node ' + (data.className || '') +  (level > opts.visibleLevel ? ' slide-up' : ''));
+        var $nodeDiv = $('<div' + (opts.draggable ? ' draggable="true"' : '') +
+            (data[opts.nodeId] ? ' id="' + data[opts.nodeId] + '"' : '') +
+            (data.parentId ? ' data-parent="' + data.parentId + '"' : '') +
+            (data.roleId ? ' data-role-id="' + data.roleId + '"' : '') +
+            (data.roleName ? ' data-role-name="' + data.roleName + '"' : '') +
+            (data.taskId ? ' data-task-id="' + data.taskId + '"' : '') +
+            (data.taskName ? ' data-task-name="' + data.taskName + '"' : '') +
+            (data.type ? ' data-type="' + data.type + '"' : '') + '>')
+          .addClass('node ' + (data.className || '') + (level > opts.visibleLevel ? ' slide-up' : ''));
+
+       $nodeDiv.addClass('context-menu-one');
       if (opts.nodeTemplate) {
         $nodeDiv.append(opts.nodeTemplate(data));
       } else {
         $nodeDiv.append('<div class="title">' + data[opts.nodeTitle] + '</div>')
-          .append(typeof opts.nodeContent !== 'undefined' ? '<div class="content">' + (data[opts.nodeContent] || '') + '</div>' : '');
+            .append(typeof opts.nodeContent !== 'undefined' ? '<div class="content">' + (data[opts.nodeContent] || '') + '</div>' : '');
       }
       //
       var nodeData = $.extend({}, data);

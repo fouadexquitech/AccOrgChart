@@ -9,22 +9,29 @@
         background: #fff;
     }
 </style>
-
-<div class="text-center">
-    <label>Activity</label>
-    <select class="form-select" id="ddlActivities" onchange="activityChange(this)"></select>
-</div>
-<div class="text-center">
-    <label>Sub-Activity</label>
-    <select class="form-select" id="ddlSubActivities" onchange="activityChange(this)"></select>
+<link rel="stylesheet" href="~/lib/jquery.contextmenu/jquery.contextMenu.css" />
+<div class="row">
+    <div class="col-6 p-2">
+         <strong>Activity</strong>
+        <select class="form-select" id="ddlActivities" onchange="activityChange(this)"></select>
+    </div>
+    <div class="col-6 p-2">
+        <strong>Sub-Activity</strong>
+            <select class="form-select" id="ddlSubActivities" onchange="activityChange(this)"></select>
+     </div>
 </div>
 <hr />
-
-<div class="text-center">
-    <div id="chart-container"></div>
+<div class="row">
+    <div class="col-12 p-2">
+        <div class="text-center">
+            <div id="chart-container" style="max-width : 100%; min-height : 100%; overflow : auto"></div>
+        </div>
+    </div>
 </div>
 
-<div class="modal" id="modalContent" tabindex="-1">
+
+
+<div class="modal" id="modalContentSubActivity" tabindex="-1">
     <div class="modal-dialog modal-lg modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
@@ -36,22 +43,31 @@
                 <div class="modal-body">
                     <div class="row">
                         <div class="form-group p-3">
-                            <div class="form-check">
-                                <input type="checkbox" id="chkSubActivity" onchange="changeSubActivityDesc(this)" class="form-check-input" value="Change Sub-Activity Name" />
-                                <label class="form-check-label" for="flexCheckDefault">
-                                    Edit Sub-Activity Description
-                                </label>
-                            </div>
-                            <input id="txtSubActivityDesc" name="txtSubActivityDesc" class="form-control" readonly="readonly" />
+                            <label>Sub-Activity Name</label>
+                            <input class="form-control" id="txtSubActivityName" name="txtSubActivityName" />
                         </div>
+                      
                     </div>
 
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <a class="btn btn-primary" onclick="submitForm()">Save changes</a>
+                    <a class="btn btn-primary" onclick="submitFormSubActivity()">Save changes</a>
                 </div>
             </form>
+
+        </div>
+    </div>
+</div>
+
+
+<div class="modal" id="modalContent" tabindex="-1">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title"><span>Edit</span></h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
 
             <form id="frmUpdateTask">
                 <div class="modal-body">
@@ -94,6 +110,8 @@
     {
     <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
     <script src="~/lib/jquery-validation/dist/additional-methods.min.js"></script>
+    <script src="~/lib/jquery.contextmenu/jquery.contextMenu.js"></script>
+   
     <script src="~/js/index.js"></script>
 
 }

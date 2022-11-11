@@ -20,6 +20,7 @@ function buildChart() {
         'data': ajaxUrl,
         'nodeTitle': 'roleName',
         'nodeContent': 'taskName',
+        'nodeType' : 'type',
         'nodeID': 'id',
         'parentNodeSymbol': '',
         'draggable': true,
@@ -30,14 +31,11 @@ function buildChart() {
             return true;
         },
         'createNode': function (node, data) {
-            $(node).dblclick(function () {
+            /*$(node).dblclick(function () {
                 resetForm();
                 selectedWfId = data.id;
-                var type = data.type;
 
-                console.log(data);
-
-                if (type == 3) //Task
+                if (data.type == 3) //Task
                 {
                     $('#spanModalContentTitle').text(data.role);
                     $('#ddlRoles').val(data.roleId);
@@ -45,18 +43,13 @@ function buildChart() {
                     getRoles(data.roleId);
                     $('#txtTaskDesc').val(data.taskName);
                     $('#modalContent').modal('show');
-                    $('#frmUpdateSubActivity').modal('hide');
-                    $('#frmUpdateTask').modal('show');
+              
                 }
-                else
-                    if (type == 2) //Sub Activity
-                    {
-                        $('#txtSubActivityDesc').val(data.roleName);
-                        $('#modalContent').modal('show');
-                        $('#frmUpdateTask').modal('hide');
-                        $('#frmUpdateSubActivity').modal('show');
-                    }
-            });
+                
+            });*/
+
+            
+
         }
 
     });
@@ -141,6 +134,56 @@ $(document).ready(function () {
 
         }
     });
+
+    $("#frmUpdateSubActivity").validate({
+        rules: {
+            txtSubActivityName: {
+                requiredInput: true
+            }
+
+        }
+    });
+
+    $.contextMenu({
+        selector: '.context-menu-one',
+        callback: function (key, options) {
+            let id = $(this).attr('id');
+            let type = $(this).attr('data-type');
+            let parentId = $(this).attr('data-parent');
+            let roleName = $(this).attr('data-role-name');
+            let roleId = $(this).attr('data-role-id');
+            let taskId = $(this).attr('data-task-id');
+            let taskName = $(this).attr('data-task-name');
+            resetForm();
+            selectedWfId = id;
+           
+            if (type == 3) //Task
+            {
+                if (key == 'edit') {
+                    $('#spanModalContentTitle').text(roleName);
+                    $('#ddlRoles').val(roleId);
+                    getTasks(0, 0, taskId);
+                    getRoles(roleId);
+                    $('#txtTaskDesc').val(taskName);
+                    $('#modalContent').modal('show');
+                }
+
+            }
+        },
+        items: {
+            "add": { name: "Add Sub Node", icon: "add" },
+            "edit": { name: "Edit", icon: "edit" },
+            "delete": { name: "Delete", icon: "delete" },
+            /*"sep1": "---------",
+            "quit": {
+                name: "Quit", icon: function () {
+                    return 'context-menu-icon context-menu-icon-quit';
+                }
+            }*/
+        }
+    });
+
+    
 });
 
 function submitForm() {
@@ -167,6 +210,30 @@ function submitForm() {
                 console.log(errorThrown);
             });
     }
+}
+
+function submitFormSubActivity()
+{
+    /*if ($("#frmUpdateSubActivity").valid()) {
+        var subActivityName = $('#txtSubActivityName').val();
+        $.ajax({
+            'url': '/WorkFlow/UpdateWorkFlow?wfId=' + selectedWfId + '&taskId=' + taskId + '&roleId=' + roleId + '&updateTask=' + updateTask + '&newTaskName=' + newTaskName,
+            'dataType': 'json'
+        })
+            .done(function (data, textStatus, jqXHR) {
+                $('#modalContentSubActivity').modal('hide');
+                $('#chart-container').empty();
+                // build the org-chart
+                var $chartContainer = this.$chartContainer;
+                if (this.$chart) {
+                    this.$chart.remove();
+                }
+                buildChart();
+            })
+            .fail(function (jqXHR, textStatus, errorThrown) {
+                console.log(errorThrown);
+            });
+    }*/
 }
 
 function changeTaskDesc(sender) {
