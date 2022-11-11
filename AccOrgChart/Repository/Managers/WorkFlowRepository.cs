@@ -42,9 +42,9 @@ namespace AccOrgChart.Repository.Managers
                     mainNode = new Node();
                     mainNode.Id = root.ActSeq;
                     mainNode.RoleId = 0;                
-                    mainNode.RoleName = root.ActDesc;
+                    mainNode.RoleName = "Activity";
                     mainNode.TaskId = 0;
-                    mainNode.TaskName = "Activity";
+                    mainNode.TaskName = root.ActDesc;
                     mainNode.Type = 1;
 
                     GetSubActChildrenNodes(mainNode, roles, tasks, subActs);
@@ -115,9 +115,9 @@ namespace AccOrgChart.Repository.Managers
 
                     childNode.Id = subAct.SacSeq;
                     childNode.RoleId = 0;                
-                    childNode.RoleName = subAct.SacDesc;
+                    childNode.RoleName = "Sub-Activity";
                     childNode.TaskId = 0;
-                    childNode.TaskName = "Sub-Activity";
+                    childNode.TaskName = subAct.SacDesc;
                     childNode.Type = 2;
 
                     childNodes.Add(childNode);
@@ -193,19 +193,12 @@ namespace AccOrgChart.Repository.Managers
             return result;
         }
 
-        public bool AddWorkFlow(WorkFlow wf)
+        public bool AddWorkFlow(int parentId, int TaskId, int RoleId, bool updateTask, string newTaskName)
         {
-            var result = _dbContext.TblJobWorkFlows.Where(x => x.JwTaskId == wf.TaskId && x.JwJobId == wf.RoleId).FirstOrDefault();
-
-            if (result == null)
-            {
-                var newWf = new TblJobWorkFlow { JwTaskId = wf.TaskId, JwJobId = wf.RoleId, JwParentId = wf.wfParentId };
-                _dbContext.Add<TblJobWorkFlow>(newWf);
-                _dbContext.SaveChanges();
-                return true;
-            }
-            else
-                return false;
+              var newWf = new TblJobWorkFlow { JwTaskId = TaskId, JwJobId = RoleId, JwParentId = parentId };
+              _dbContext.Add<TblJobWorkFlow>(newWf);
+              _dbContext.SaveChanges();
+              return true;
         }
 
         public bool AddWorkflowToSubActivity(int SubActivityId, int TaskId,int RoleId, bool updateTask, string newTaskName)

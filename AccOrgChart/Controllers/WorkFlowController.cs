@@ -32,11 +32,11 @@ namespace AccOrgChart.Controllers
             }
         }
 
-        public bool AddWorkFlow(WorkFlow wf)
+        public bool AddWorkFlow(int parentId, int TaskId, int RoleId, bool updateTask, string newTaskName)
         {
             try
             {
-                return this._workFlowRepository.AddWorkFlow(wf);
+                return this._workFlowRepository.AddWorkFlow(parentId,  TaskId,  RoleId,  updateTask,  newTaskName);
             }
             catch (Exception ex)
             {
