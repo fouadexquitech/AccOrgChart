@@ -213,11 +213,11 @@ namespace AccOrgChart.Controllers
             }
         }
 
-        public bool EditSubActivity(int subActivityId, string subActivityDesc)
+        public bool UpdateSubActivity(int subActivityId, string newSubActDesc)
         {
             try
             {
-                return this._activitiesRepository.EditSubActivity(subActivityId, subActivityDesc);
+                return this._activitiesRepository.UpdateSubActivity(subActivityId, newSubActDesc);
             }
             catch (Exception ex)
             {

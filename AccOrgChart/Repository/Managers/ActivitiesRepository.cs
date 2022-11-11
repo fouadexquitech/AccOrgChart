@@ -164,7 +164,7 @@ namespace AccOrgChart.Repository.Managers
         #endregion
 
 
-#region "ActivitySub"
+#region "SubActivity"
 
         public List<TblActivitySub> GetSubActivities()
         {
@@ -238,7 +238,7 @@ namespace AccOrgChart.Repository.Managers
                 return false;
         }
 
-        public bool EditSubActivity(int subActivityId,string subActivityDesc)
+        public bool UpdateSubActivity(int subActivityId,string subActivityDesc)
         {
             var result = _StatisticsDbContext.TblActivitySubs.Where(x => x.SacSeq == subActivityId).FirstOrDefault();
             result.SacDesc = subActivityDesc;

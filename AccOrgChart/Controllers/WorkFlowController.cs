@@ -60,11 +60,11 @@ namespace AccOrgChart.Controllers
         }
 
 
-        public bool UpdateWorkFlowParentId(int wfId, int parentId)
+        public bool UpdateWorkFlowParentId(int wfId, int parentId,int type)
         {
             try
             {
-                return this._workFlowRepository.UpdateWorkFlowParentId(wfId,parentId);
+                return this._workFlowRepository.UpdateWorkFlowParentId(wfId,parentId, type);
             }
             catch (Exception ex)
             {

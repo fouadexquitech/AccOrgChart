@@ -223,10 +223,19 @@ namespace AccOrgChart.Repository.Managers
                 return false;
         }
 
-        public bool UpdateWorkFlowParentId(int wfId, int parentId)
+        public bool UpdateWorkFlowParentId(int wfId, int parentId,int type)
         {
             var result = _dbContext.TblJobWorkFlows.Where(x => x.JwId == wfId).FirstOrDefault();
-            result.JwParentId = parentId;
+
+            if (type==2)
+            {
+                result.JwParentId = null;
+                result.JwParentSubActivity = parentId;
+            }
+            else if (type == 3)
+                result.JwParentId = parentId;
+
+
             _dbContext.TblJobWorkFlows.Update(result);
             _dbContext.SaveChanges();
 
