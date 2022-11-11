@@ -1,6 +1,7 @@
 ﻿var selectedNodeId = -1;
 var subActivityMode = 'add';
 var wfMode = 'add';
+var wfAddMode = 0;
 function buildChart() {
     let actId = 0;
     let subActId = 0;
@@ -94,6 +95,7 @@ function resetForm() {
     $('#txtTaskDesc').attr("readonly", true);
     subActivityMode = 'add';
     wfMode = 'add';
+    wfAddMode = 0;
     $('#frmUpdateSubActivity').trigger("reset");
     $('#chkSubActivity').attr("checked", false);
     $('#txtSubActivityDesc').attr("readonly", true);
@@ -175,6 +177,15 @@ $(document).ready(function () {
                 }
                 else if (wfMode = 'add') {
                     wfMode = 'add';
+                    wfAddMode = 1;
+                    $('#spanWfTitle').text('Add');
+                    $('#spanModalContentTitle').text(roleName);
+                    getTasks(0, 0, 0);
+                    getRoles(0);
+                    $('#chkTask').attr('checked', false);
+                    $('#txtTaskDesc').val('');
+                    $('#txtTaskDesc').attr('readonly', true);
+                    $('#modalContent').modal('show');
                 }
 
             }
@@ -187,6 +198,7 @@ $(document).ready(function () {
                 }
                 else if (key == 'add') {
                     wfMode = 'add';
+                    wfAddMode = 2;
                     $('#spanWfTitle').text('Add');
                     $('#spanModalContentTitle').text(roleName);
                     getTasks(0, 0, 0);
@@ -210,8 +222,8 @@ $(document).ready(function () {
         items: {
             "add": { name: "Add Sub Node", icon: "add" },
             "edit": { name: "Edit", icon: "edit" },
-            "delete": { name: "Delete", icon: "delete" },
-            /*"sep1": "---------",
+            /*"delete": { name: "Delete", icon: "delete" },
+            "sep1": "---------",
             "quit": {
                 name: "Quit", icon: function () {
                     return 'context-menu-icon context-menu-icon-quit';
@@ -232,7 +244,12 @@ function submitForm() {
         
         var url = '/WorkFlow/UpdateWorkFlow?wfId=' + selectedNodeId + '&taskId=' + taskId + '&roleId=' + roleId + '&updateTask=' + updateTask + '&newTaskName=' + newTaskName;
         if (wfMode == 'add') {
-            url = '/WorkFlow/AddWorkflowToSubActivity?SubActivityId=' + selectedNodeId + '&taskId=' + taskId + '&roleId=' + roleId + '&updateTask=' + updateTask + '&newTaskName=' + newTaskName;
+            if (wfAddMode == 1) {
+                url = '/WorkFlow/AddWorkFlow?parentId=' + selectedNodeId + '&taskId=' + taskId + '&roleId=' + roleId + '&updateTask=' + updateTask + '&newTaskName=' + newTaskName;
+            }
+            else if (wfAddMode == 2) {
+                url = '/WorkFlow/AddWorkflowToSubActivity?SubActivityId=' + selectedNodeId + '&taskId=' + taskId + '&roleId=' + roleId + '&updateTask=' + updateTask + '&newTaskName=' + newTaskName;
+            }
         }
         $.ajax({
             'url': url,
