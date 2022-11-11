@@ -208,19 +208,41 @@ namespace AccOrgChart.Repository.Managers
                 return false;
         }
 
-        public bool AddWorkflowToSubActivity(int SubActivityId, int TaskId,int RoleId)
+        public bool AddWorkflowToSubActivity(int SubActivityId, int TaskId,int RoleId, bool updateTask, string newTaskName)
         {
-            var result = _dbContext.TblJobWorkFlows.Where(x => x.JwTaskId == TaskId && x.JwJobId == RoleId).FirstOrDefault();
-
-            if (result == null)
+            var t = _dbContext.Database.BeginTransaction();
+            try
             {
-                var newWf = new TblJobWorkFlow { JwTaskId = TaskId, JwJobId = RoleId, JwParentSubActivity = SubActivityId };
-                _dbContext.Add<TblJobWorkFlow>(newWf);
-                _dbContext.SaveChanges();
-                return true;
+                var result = _dbContext.TblJobWorkFlows.Where(x => x.JwTaskId == TaskId && x.JwJobId == RoleId).FirstOrDefault();
+
+                if (result == null)
+                {
+                    var newWf = new TblJobWorkFlow { JwTaskId = TaskId, JwJobId = RoleId, JwParentSubActivity = SubActivityId };
+                    _dbContext.Add<TblJobWorkFlow>(newWf);
+                    _dbContext.SaveChanges();
+
+                    if (updateTask)
+                    {
+                        var task = _dbContext.TblActivityTasks.Where(x => x.TskSeq == TaskId).FirstOrDefault();
+                        task.TskDesc = newTaskName;
+                        _dbContext.TblActivityTasks.Update(task);
+                        _dbContext.SaveChanges();
+                    }
+
+                    t.Commit();
+                    return true;
+                }
+                else
+                {
+                    t.Rollback();
+                    return false;
+                }
             }
-            else
+            catch (Exception ex)
+            {
+                t.Rollback();
                 return false;
+            }
         }
 
         public bool UpdateWorkFlowParentId(int wfId, int parentId,int type)

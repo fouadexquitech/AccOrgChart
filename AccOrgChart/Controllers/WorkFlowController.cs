@@ -46,11 +46,11 @@ namespace AccOrgChart.Controllers
         }
 
 
-        public bool AddWorkflowToSubActivity(int SubActivityId, int TaskId, int RoleId)
+        public bool AddWorkflowToSubActivity(int SubActivityId, int TaskId, int RoleId, bool updateTask, string newTaskName)
         {
             try
             {
-                return this._workFlowRepository.AddWorkflowToSubActivity(SubActivityId,  TaskId,  RoleId);
+                return this._workFlowRepository.AddWorkflowToSubActivity(SubActivityId,  TaskId,  RoleId, updateTask, newTaskName);
             }
             catch (Exception ex)
             {

@@ -1,4 +1,6 @@
-﻿var selectedWfId = -1;
+﻿var selectedNodeId = -1;
+var subActivityMode = 'add';
+var wfMode = 'add';
 function buildChart() {
     let actId = 0;
     let subActId = 0;
@@ -33,7 +35,7 @@ function buildChart() {
         'createNode': function (node, data) {
             /*$(node).dblclick(function () {
                 resetForm();
-                selectedWfId = data.id;
+                selectedNodeId = data.id;
 
                 if (data.type == 3) //Task
                 {
@@ -55,18 +57,18 @@ function buildChart() {
     });
 
     oc.$chart.on('nodedrop.orgchart', function (event, extraParams) {
-        console.log('draggedNode:' + extraParams.draggedNode.children('.title').text()
+        /*console.log('draggedNode:' + extraParams.draggedNode.children('.title').text()
             + ', dragZone:' + extraParams.dragZone.children('.title').text()
             + ', dropZone:' + extraParams.dropZone.children('.title').text()
-        );
+        );*/
 
         let id = extraParams.draggedNode[0].id;
 
         let oldParentId = extraParams.draggedNode[0].getAttribute('data-parent');
         let newParentId = extraParams.dropZone[0].id;
-
+        let parentType = extraParams.dropZone[0].getAttribute('data-type');
         $.ajax({
-            'url': '/WorkFlow/UpdateWorkFlowParentId?wfId=' + id + '&parentId=' + newParentId,
+            'url': '/WorkFlow/UpdateWorkFlowParentId?wfId=' + id + '&parentId=' + newParentId + '&type=' + parentType,
             'dataType': 'json'
         })
             .done(function (data, textStatus, jqXHR) {
@@ -90,7 +92,8 @@ function resetForm() {
     $('#frmUpdateTask').trigger("reset");
     $('#chkTask').attr("checked", false);
     $('#txtTaskDesc').attr("readonly", true);
-
+    subActivityMode = 'add';
+    wfMode = 'add';
     $('#frmUpdateSubActivity').trigger("reset");
     $('#chkSubActivity').attr("checked", false);
     $('#txtSubActivityDesc').attr("readonly", true);
@@ -148,6 +151,7 @@ $(document).ready(function () {
         selector: '.context-menu-one',
         callback: function (key, options) {
             let id = $(this).attr('id');
+            
             let type = $(this).attr('data-type');
             let parentId = $(this).attr('data-parent');
             let roleName = $(this).attr('data-role-name');
@@ -155,11 +159,13 @@ $(document).ready(function () {
             let taskId = $(this).attr('data-task-id');
             let taskName = $(this).attr('data-task-name');
             resetForm();
-            selectedWfId = id;
+            selectedNodeId = id;
            
             if (type == 3) //Task
             {
                 if (key == 'edit') {
+                    wfMode = 'edit';
+                    $('#spanWfTitle').text('Edit');
                     $('#spanModalContentTitle').text(roleName);
                     $('#ddlRoles').val(roleId);
                     getTasks(0, 0, taskId);
@@ -167,7 +173,38 @@ $(document).ready(function () {
                     $('#txtTaskDesc').val(taskName);
                     $('#modalContent').modal('show');
                 }
+                else if (wfMode = 'add') {
+                    wfMode = 'add';
+                }
 
+            }
+            else if (type == 2) {
+                if (key == 'edit') {
+                    subActivityMode = 'edit';
+                    $('#spanSubActivityTitle').text('Edit Sub-Activity');
+                    $('#txtSubActivityName').val(taskName);
+                    $('#modalContentSubActivity').modal('show');
+                }
+                else if (key == 'add') {
+                    wfMode = 'add';
+                    $('#spanWfTitle').text('Add');
+                    $('#spanModalContentTitle').text(roleName);
+                    getTasks(0, 0, 0);
+                    getRoles(0);
+                    $('#chkTask').attr('checked', false);
+                    $('#txtTaskDesc').val('');
+                    $('#txtTaskDesc').attr('readonly', true);
+                    $('#modalContent').modal('show');
+                }
+
+            }
+            else if (type == 1) {
+                if (key == 'add') {
+                    subActivityMode = 'add';
+                    $('#spanSubActivityTitle').text('Add New Sub-Activity');
+                    $('#txtSubActivityName').val('');
+                    $('#modalContentSubActivity').modal('show');
+                }
             }
         },
         items: {
@@ -192,8 +229,13 @@ function submitForm() {
         roleId = $('#ddlRoles').val();
         var updateTask = $('#chkTask').prop('checked');
         var newTaskName = $('#txtTaskDesc').val();
+        
+        var url = '/WorkFlow/UpdateWorkFlow?wfId=' + selectedNodeId + '&taskId=' + taskId + '&roleId=' + roleId + '&updateTask=' + updateTask + '&newTaskName=' + newTaskName;
+        if (wfMode == 'add') {
+            url = '/WorkFlow/AddWorkflowToSubActivity?SubActivityId=' + selectedNodeId + '&taskId=' + taskId + '&roleId=' + roleId + '&updateTask=' + updateTask + '&newTaskName=' + newTaskName;
+        }
         $.ajax({
-            'url': '/WorkFlow/UpdateWorkFlow?wfId=' + selectedWfId + '&taskId=' + taskId + '&roleId=' + roleId + '&updateTask=' + updateTask + '&newTaskName=' + newTaskName,
+            'url': url,
             'dataType': 'json'
         })
             .done(function (data, textStatus, jqXHR) {
@@ -214,10 +256,14 @@ function submitForm() {
 
 function submitFormSubActivity()
 {
-    /*if ($("#frmUpdateSubActivity").valid()) {
+    if ($("#frmUpdateSubActivity").valid()) {
         var subActivityName = $('#txtSubActivityName').val();
+        var url = '/Activities/UpdateSubActivity?subActivityId=' + selectedNodeId + '&newSubActDesc=' + subActivityName;
+        if (subActivityMode == 'add') {
+            url = '/Activities/AddSubActivity?ActivityId=' + selectedNodeId + '&SubActivityDesc=' + subActivityName;
+        }
         $.ajax({
-            'url': '/WorkFlow/UpdateWorkFlow?wfId=' + selectedWfId + '&taskId=' + taskId + '&roleId=' + roleId + '&updateTask=' + updateTask + '&newTaskName=' + newTaskName,
+            'url': url,
             'dataType': 'json'
         })
             .done(function (data, textStatus, jqXHR) {
@@ -233,7 +279,7 @@ function submitFormSubActivity()
             .fail(function (jqXHR, textStatus, errorThrown) {
                 console.log(errorThrown);
             });
-    }*/
+    }
 }
 
 function changeTaskDesc(sender) {
