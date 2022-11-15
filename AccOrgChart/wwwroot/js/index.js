@@ -175,7 +175,7 @@ $(document).ready(function () {
                     $('#txtTaskDesc').val(taskName);
                     $('#modalContent').modal('show');
                 }
-                else if (wfMode = 'add') {
+                else if (key == 'add') {
                     wfMode = 'add';
                     wfAddMode = 1;
                     $('#spanWfTitle').text('Add');
@@ -187,6 +187,11 @@ $(document).ready(function () {
                     $('#txtTaskDesc').attr('readonly', true);
                     $('#modalContent').modal('show');
                 }
+                else if (key == 'delete') {
+                    wfMode = 'delete';
+                    deleteWorkflow(id);
+                }
+
 
             }
             else if (type == 2) {
@@ -208,6 +213,10 @@ $(document).ready(function () {
                     $('#txtTaskDesc').attr('readonly', true);
                     $('#modalContent').modal('show');
                 }
+                else if (key == 'delete') {
+                    subActivityMode = 'delete';
+                    deleteSubActivity(id);
+                }
 
             }
             else if (type == 1) {
@@ -217,13 +226,21 @@ $(document).ready(function () {
                     $('#txtSubActivityName').val('');
                     $('#modalContentSubActivity').modal('show');
                 }
+                else if (key == 'delete') {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Oops...',
+                        text: 'You cannot delete an activity',
+                        confirmButtonColor: '#f27474'
+                    });
+                }
             }
         },
         items: {
             "add": { name: "Add Sub Node", icon: "add" },
             "edit": { name: "Edit", icon: "edit" },
-            /*"delete": { name: "Delete", icon: "delete" },
-            "sep1": "---------",
+            "delete": { name: "Delete", icon: "delete" },
+            /*"sep1": "---------",
             "quit": {
                 name: "Quit", icon: function () {
                     return 'context-menu-icon context-menu-icon-quit';
@@ -234,6 +251,58 @@ $(document).ready(function () {
 
     
 });
+
+function deleteWorkflow(wfId) {
+    $.ajax({
+        'url': '/WorkFlow/DeleteWorkFlow?wfId=' + wfId,
+        'dataType': 'json'
+    })
+        .done(function (data, textStatus, jqXHR) {
+            $('#modalContent').modal('hide');
+            $('#chart-container').empty();
+            // build the org-chart
+            var $chartContainer = this.$chartContainer;
+            if (this.$chart) {
+                this.$chart.remove();
+            }
+            buildChart();
+        })
+        .fail(function (jqXHR, textStatus, errorThrown) {
+            console.log(errorThrown);
+        });
+}
+
+function deleteSubActivity(id)
+{
+    $.ajax({
+        'url': '/Activities/DeleteSubActivity?subActId=' + id,
+        'dataType': 'json'
+    })
+        .done(function (data, textStatus, jqXHR) {
+            if (data.done) {
+                $('#modalContent').modal('hide');
+                $('#chart-container').empty();
+                // build the org-chart
+                var $chartContainer = this.$chartContainer;
+                if (this.$chart) {
+                    this.$chart.remove();
+                }
+                buildChart();
+            }
+            else {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Oops...',
+                    text: data.message,
+                    confirmButtonColor: '#f27474'
+                });
+                
+            }
+        })
+        .fail(function (jqXHR, textStatus, errorThrown) {
+            console.log(errorThrown);
+        });
+}
 
 function submitForm() {
     if ($("#frmUpdateTask").valid()) {
