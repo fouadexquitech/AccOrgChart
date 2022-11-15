@@ -12,9 +12,8 @@ namespace AccOrgChart.Repository.Models.HR_StatisticsModels
         [Key]
         [Column("tskSeq")]
         public int TskSeq { get; set; }
-        [Key]
         [Column("subActID")]
-        public int SubActId { get; set; }
+        public int? SubActId { get; set; }
         [Column("tskCode")]
         [StringLength(50)]
         [Unicode(false)]

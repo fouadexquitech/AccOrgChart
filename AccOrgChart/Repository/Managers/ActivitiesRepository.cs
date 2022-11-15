@@ -19,10 +19,10 @@ namespace AccOrgChart.Repository.Managers
         }
 
 
-#region "ActivityGroup"
+        #region "ActivityGroup"
         public List<TblActivityGroup> GetActivityGroup(int ActGrpId)
         {
-            var result=new List<TblActivityGroup>();
+            var result = new List<TblActivityGroup>();
 
             if (ActGrpId > 0)
                 result = _StatisticsDbContext.TblActivityGroups.Where(x => x.ActGrpSeq == ActGrpId).ToList();
@@ -40,7 +40,7 @@ namespace AccOrgChart.Repository.Managers
             //              }).ToList();
             //else
             //    result = (from b in _StatisticsDbContext.TblActivityGroups
-                         
+
             //              select new ActivityGroup
             //              {
             //                  actGrpSeq = b.ActGrpSeq,
@@ -48,7 +48,7 @@ namespace AccOrgChart.Repository.Managers
             //                  actGrpDesc = b.ActGrpDesc
             //              }).ToList();
 
-            return result.OrderBy(x=>x.ActGrpDesc).ToList();
+            return result.OrderBy(x => x.ActGrpDesc).ToList();
         }
 
         public bool UpdateActivityGroup(ActivityGroup activity)
@@ -56,7 +56,7 @@ namespace AccOrgChart.Repository.Managers
             var result = _StatisticsDbContext.TblActivityGroups.Where(x => x.ActGrpSeq == activity.actGrpSeq).FirstOrDefault();
             result.ActGrpDesc = activity.actGrpDesc;
             result.ActGrpCode = activity.actGrpCode;
-          
+
             if (result != null)
             {
                 _StatisticsDbContext.TblActivityGroups.Update(result);
@@ -93,7 +93,7 @@ namespace AccOrgChart.Repository.Managers
                 return true;
             }
             else
-                return false;                  
+                return false;
         }
         #endregion
 
@@ -101,7 +101,7 @@ namespace AccOrgChart.Repository.Managers
         #region "Activities"
         public List<TblActivity> GetActivities()
         {
-           return _StatisticsDbContext.TblActivities.OrderBy(x => x.ActDesc).ToList(); ;
+            return _StatisticsDbContext.TblActivities.OrderBy(x => x.ActDesc).ToList(); ;
         }
 
         public List<TblActivity> GetActivity(int id)
@@ -149,11 +149,11 @@ namespace AccOrgChart.Repository.Managers
 
         public bool AddActivity(Activities act)
         {
-            var activity = _StatisticsDbContext.TblActivities.Where(x => x.ActDesc == act.actDesc && x.ActGrpId==act.actGrpId ).FirstOrDefault();
+            var activity = _StatisticsDbContext.TblActivities.Where(x => x.ActDesc == act.actDesc && x.ActGrpId == act.actGrpId).FirstOrDefault();
 
             if (activity == null)
             {
-                var result = new TblActivity { ActDesc = act.actDesc, ActGrpId = act.actGrpId,ActCode=act.actCode,ActSort=act.actSort };
+                var result = new TblActivity { ActDesc = act.actDesc, ActGrpId = act.actGrpId, ActCode = act.actCode, ActSort = act.actSort };
                 _StatisticsDbContext.Add<TblActivity>(result);
                 _StatisticsDbContext.SaveChanges();
                 return true;
@@ -164,8 +164,7 @@ namespace AccOrgChart.Repository.Managers
         #endregion
 
 
-#region "SubActivity"
-
+        #region "SubActivity"
         public List<TblActivitySub> GetSubActivities()
         {
             var result = new List<TblActivitySub>();
@@ -193,18 +192,37 @@ namespace AccOrgChart.Repository.Managers
                 return false;
         }
 
-        public bool DelActivitySub(int id)
+        public result DeleteSubActivity(int subActId)
         {
-            var result = _StatisticsDbContext.TblActivitySubs.Where(x => x.SacSeq == id).FirstOrDefault();
+            result result = new result();
 
-            if (result != null)
+            var subAct = _StatisticsDbContext.TblActivitySubs.Where(x => x.SacSeq == subActId).FirstOrDefault();
+
+            if (subAct != null)
             {
-                _StatisticsDbContext.TblActivitySubs.Remove(result);
-                _StatisticsDbContext.SaveChanges();
-                return true;
+                var task = _StatisticsDbContext.TblJobWorkFlows.Where(x => x.JwParentSubActivity == subActId);
+
+                if (task != null)
+                {
+                    result.done = false;
+                    result.message = "This Sub-Activity has children, please assign it's childrens to another Sub-Activity before delete it.";
+                }
+                else
+                {
+                    _StatisticsDbContext.TblActivitySubs.Remove(subAct);
+                    _StatisticsDbContext.SaveChanges();
+
+                    result.done = true;
+                    result.message = "Sub-Activity removed sucessfully";
+                }
             }
             else
-                return false;
+            { 
+                result.done = false;
+                result.message = "Sub-Activity not found";
+            }
+
+            return result;
         }
 
         public bool AddActivitySub(ActivitySub act)
@@ -238,7 +256,7 @@ namespace AccOrgChart.Repository.Managers
                 return false;
         }
 
-        public bool UpdateSubActivity(int subActivityId,string subActivityDesc)
+        public bool UpdateSubActivity(int subActivityId, string subActivityDesc)
         {
             var result = _StatisticsDbContext.TblActivitySubs.Where(x => x.SacSeq == subActivityId).FirstOrDefault();
             result.SacDesc = subActivityDesc;
@@ -258,7 +276,7 @@ namespace AccOrgChart.Repository.Managers
 
 
         #region "ActivityTask"
-        public List<TblActivityTask> GetTasks(int actId,int subActId)
+        public List<TblActivityTask> GetTasks(int actId, int subActId)
         {
             var result = new List<TblActivityTask>();
 
@@ -285,7 +303,7 @@ namespace AccOrgChart.Repository.Managers
         public bool UpdateTaskDesc(ActivityTask act)
         {
             var result = _StatisticsDbContext.TblActivityTasks.Where(x => x.TskSeq == act.tskSeq).FirstOrDefault();
-            
+
             if (result != null)
             {
                 result.TskDesc = act.tskDesc;

@@ -30,18 +30,18 @@ namespace AccOrgChart.Repository.Managers
                              select t).ToList();
 
                 var root = _dbContext.TblActivities.Where(x => x.ActSeq == actId).FirstOrDefault();
-               
+
                 var subActs = (from b in _dbContext.TblActivities
-                                     join c in _dbContext.TblActivitySubs on b.ActSeq equals c.ActId
-                                     where b.ActSeq == actId
-                                     select c).ToList();
+                               join c in _dbContext.TblActivitySubs on b.ActSeq equals c.ActId
+                               where b.ActSeq == actId
+                               select c).ToList();
 
                 Node? mainNode = null;
                 if (root != null)
                 {
                     mainNode = new Node();
                     mainNode.Id = root.ActSeq;
-                    mainNode.RoleId = 0;                
+                    mainNode.RoleId = 0;
                     mainNode.RoleName = "Activity";
                     mainNode.TaskId = 0;
                     mainNode.TaskName = root.ActDesc;
@@ -102,7 +102,7 @@ namespace AccOrgChart.Repository.Managers
             }
         }
 
-        private void GetSubActChildrenNodes(Node node, List<TblRole> roles, List<TblActivityTask> tasks,  List<TblActivitySub> subActs)
+        private void GetSubActChildrenNodes(Node node, List<TblRole> roles, List<TblActivityTask> tasks, List<TblActivitySub> subActs)
         {
             var childSubActivities = subActs;
             var childNodes = new List<Node>();
@@ -114,7 +114,7 @@ namespace AccOrgChart.Repository.Managers
                     var childNode = new Node();
 
                     childNode.Id = subAct.SacSeq;
-                    childNode.RoleId = 0;                
+                    childNode.RoleId = 0;
                     childNode.RoleName = "Sub-Activity";
                     childNode.TaskId = 0;
                     childNode.TaskName = subAct.SacDesc;
@@ -127,17 +127,17 @@ namespace AccOrgChart.Repository.Managers
                                      where b.SubActivityId == subAct.SacSeq
                                      select b).ToList();
                     var i = 0;
-                    GetChildrenNodes(childNode, roles, tasks, workFlows,i);
+                    GetChildrenNodes(childNode, roles, tasks, workFlows, i);
                 }
             }
         }
 
 
-        private void GetChildrenNodes(Node node, List<TblRole> roles, List<TblActivityTask> tasks, List<VwJobWorkFlow> workFlows,int i)
+        private void GetChildrenNodes(Node node, List<TblRole> roles, List<TblActivityTask> tasks, List<VwJobWorkFlow> workFlows, int i)
         {
-            var childWorkflows=new List<VwJobWorkFlow>();
+            var childWorkflows = new List<VwJobWorkFlow>();
 
-            if (i==0)
+            if (i == 0)
                 childWorkflows = workFlows.Where(x => x.SubActivityId == node.Id && x?.JwParentId == null).ToList();
             else
                 childWorkflows = workFlows.Where(x => x.JwParentId == node.Id).ToList();
@@ -168,40 +168,40 @@ namespace AccOrgChart.Repository.Managers
                     childNodes.Add(childNode);
                     node.Children = childNodes;
                     i++;
-                    GetChildrenNodes(childNode, roles, tasks, workFlows,i);
+                    GetChildrenNodes(childNode, roles, tasks, workFlows, i);
                 }
-            }                   
+            }
         }
 
 
         public List<WorkFlow> GetWorkFlowBySubActivity(int subActId)
         {
-            var result =( from b in _dbContext.VwJobWorkFlows
-                         where b.SubActivityId==subActId
+            var result = (from b in _dbContext.VwJobWorkFlows
+                          where b.SubActivityId == subActId
 
-                         select new WorkFlow
-                         {
-                             wfId = b.JwId,
-                             wfSort=b.JwSort,
-                             wfParentId=b.JwParentId,
-                             RoleId = b.RoleId,
-                             Role = b.Role,
-                             TaskId=b.TaskId,
-                             Task=b.Task
-                         }).ToList();
+                          select new WorkFlow
+                          {
+                              wfId = b.JwId,
+                              wfSort = b.JwSort,
+                              wfParentId = b.JwParentId,
+                              RoleId = b.RoleId,
+                              Role = b.Role,
+                              TaskId = b.TaskId,
+                              Task = b.Task
+                          }).ToList();
 
             return result;
         }
 
         public bool AddWorkFlow(int parentId, int TaskId, int RoleId, bool updateTask, string newTaskName)
         {
-              var newWf = new TblJobWorkFlow { JwTaskId = TaskId, JwJobId = RoleId, JwParentId = parentId };
-              _dbContext.Add<TblJobWorkFlow>(newWf);
-              _dbContext.SaveChanges();
-              return true;
+            var newWf = new TblJobWorkFlow { JwTaskId = TaskId, JwJobId = RoleId, JwParentId = parentId };
+            _dbContext.Add<TblJobWorkFlow>(newWf);
+            _dbContext.SaveChanges();
+            return true;
         }
 
-        public bool AddWorkflowToSubActivity(int SubActivityId, int TaskId,int RoleId, bool updateTask, string newTaskName)
+        public bool AddWorkflowToSubActivity(int SubActivityId, int TaskId, int RoleId, bool updateTask, string newTaskName)
         {
             var t = _dbContext.Database.BeginTransaction();
             try
@@ -238,26 +238,84 @@ namespace AccOrgChart.Repository.Managers
             }
         }
 
-        public bool UpdateWorkFlowParentId(int wfId, int parentId,int type)
+        public bool UpdateWorkFlowParentId(int wfId, int parentId, int type)
         {
-            var result = _dbContext.TblJobWorkFlows.Where(x => x.JwId == wfId).FirstOrDefault();
+            int parentSubactId= 0;
 
-            if (type==2)
+            var firstWf = _dbContext.TblJobWorkFlows.Where(x => x.JwId == wfId).FirstOrDefault();
+            if (firstWf != null)
             {
-                result.JwParentId = null;
-                result.JwParentSubActivity = parentId;
+                var firstTask = _dbContext.TblActivityTasks.Where(x => x.TskSeq == firstWf.JwTaskId).FirstOrDefault();
+                if (firstTask != null)
+                {
+                    if (type == 2)
+                    {
+                        parentSubactId = parentId;
+
+                        //change the Subactivity of Task on First Work Flow
+                        firstTask.SubActId = parentSubactId;
+
+
+                        _dbContext.TblActivityTasks.Update(firstTask);
+                        _dbContext.SaveChanges();
+
+                        firstWf.JwParentId = null;
+                        firstWf.JwParentSubActivity = parentId;
+                        _dbContext.TblJobWorkFlows.Update(firstWf);
+                        _dbContext.SaveChanges();
+                    }
+                    else if (type == 3)
+                    {
+                        ////Get Task from library
+                        var tasksSubAct = _dbContext.VwJobWorkFlows.Where(x => x.JwId == parentId).FirstOrDefault();
+
+                        //change the Subactivity of Task on First Work Flow
+                        firstTask.SubActId = tasksSubAct.SubActivityId;
+
+                        _dbContext.TblActivityTasks.Update(firstTask);
+                        _dbContext.SaveChanges();
+
+                        firstWf.JwParentId = parentId;
+                        firstWf.JwParentSubActivity = null;
+                        _dbContext.TblJobWorkFlows.Update(firstWf);
+                        _dbContext.SaveChanges();
+
+                        parentSubactId = tasksSubAct.SubActivityId;
+                    }
+
+
+                    bool found = true;
+                    TblJobWorkFlow parentWF = new TblJobWorkFlow();
+                    parentWF = firstWf;
+
+                    while (found)
+                    {
+                        var SecondWf = _dbContext.TblJobWorkFlows.Where(x => x.JwParentId == parentWF.JwId).FirstOrDefault();
+
+                        if (SecondWf == null)
+                            found = false;
+                        else
+                        {
+                            parentWF = SecondWf;
+                            found = true;
+
+                            var task = _dbContext.TblActivityTasks.Where(x => x.TskSeq == parentWF.JwTaskId).FirstOrDefault();
+                            task.SubActId = parentSubactId;
+
+                            _dbContext.TblActivityTasks.Update(task);
+                            _dbContext.SaveChanges();
+                        }
+                    }
+                }
+
+                return true;
             }
-            else if (type == 3)
-                result.JwParentId = parentId;
-
-
-            _dbContext.TblJobWorkFlows.Update(result);
-            _dbContext.SaveChanges();
-
-            return true;
+            else
+                return false;
         }
 
-        public bool UpdateWorkFlow(int wfId,int taskId,int roleId, bool updateTask, string newTaskName)
+
+        public bool UpdateWorkFlow(int wfId, int taskId, int roleId, bool updateTask, string newTaskName)
         {
             var t = _dbContext.Database.BeginTransaction();
             try

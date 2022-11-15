@@ -92,14 +92,6 @@ namespace AccOrgChart.Repository
                 entity.Property(e => e.SacSort).HasDefaultValueSql("((0))");
             });
 
-            modelBuilder.Entity<TblActivityTask>(entity =>
-            {
-                entity.HasKey(e => new { e.TskSeq, e.SubActId })
-                    .HasName("PK_tblActivitiesTask");
-
-                entity.Property(e => e.TskSeq).ValueGeneratedOnAdd();
-            });
-
             modelBuilder.Entity<TblCode>(entity =>
             {
                 entity.HasKey(e => e.Seq)
@@ -165,6 +157,8 @@ namespace AccOrgChart.Repository
                 entity.Property(e => e.InsertedDate).HasDefaultValueSql("(getdate())");
 
                 entity.Property(e => e.JwParentId).HasDefaultValueSql("((0))");
+
+                entity.Property(e => e.JwParentSubActivity).HasDefaultValueSql("((0))");
 
                 entity.Property(e => e.JwRaci).HasDefaultValueSql("((0))");
 

@@ -63,5 +63,29 @@ namespace AccOrgChart.Repository.Models.HR_StatisticsModels
         public int? JwParentId { get; set; }
         [Column("jwParentSubActivity")]
         public int? JwParentSubActivity { get; set; }
+        [Column("jwProposedSubAct")]
+        [StringLength(500)]
+        [Unicode(false)]
+        public string? JwProposedSubAct { get; set; }
+        [Column("jwProposedTask1")]
+        [StringLength(1000)]
+        [Unicode(false)]
+        public string? JwProposedTask1 { get; set; }
+        [Column("jwProposedTask2")]
+        [StringLength(1000)]
+        [Unicode(false)]
+        public string? JwProposedTask2 { get; set; }
+        [Column("jwProposedTask3")]
+        [StringLength(1000)]
+        [Unicode(false)]
+        public string? JwProposedTask3 { get; set; }
+        [Column("jwProposedBy")]
+        [StringLength(100)]
+        [Unicode(false)]
+        public string? JwProposedBy { get; set; }
+        [Column("jwProposedAction")]
+        [StringLength(50)]
+        [Unicode(false)]
+        public string? JwProposedAction { get; set; }
     }
 }

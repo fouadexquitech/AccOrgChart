@@ -59,7 +59,6 @@ namespace AccOrgChart.Controllers
             }
         }
 
-
         public bool UpdateWorkFlowParentId(int wfId, int parentId,int type)
         {
             try

@@ -21,7 +21,7 @@ namespace AccOrgChart.Repository.Interfaces
 
         public List<TblActivitySub> GetSubActivities();
         public bool UpdateActivitySub(ActivitySub act);
-        public bool DelActivitySub(int id);
+        public result DeleteSubActivity(int subActId);
         public bool AddActivitySub(ActivitySub act);
         public bool AddSubActivity(int ActivityId, string SubActivityDesc);
         public bool UpdateSubActivity(int subActivityId, string subActivityDesc);

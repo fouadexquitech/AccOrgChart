@@ -79,7 +79,6 @@ namespace AccOrgChart.Controllers
 
 
         #region "Activity"
-
         public List<TblActivity> GetActivities()
         {
             try
@@ -147,7 +146,7 @@ namespace AccOrgChart.Controllers
         #endregion
 
 
-        #region "ActivitySub"
+        #region "SubActivity"
         public List<TblActivitySub> GetSubActivities()
         {
             try
@@ -174,29 +173,19 @@ namespace AccOrgChart.Controllers
             }
         }
 
-        public bool DelActivitySub(int id)
+        public result DeleteSubActivity(int subActId)
         {
             try
             {
-                return this._activitiesRepository.DelActivitySub(id);
+                return this._activitiesRepository.DeleteSubActivity(subActId);
             }
             catch (Exception ex)
             {
                 _ilogger.LogError(ex.Message);
-                return false;
-            }
-        }
-
-        public bool AddActivitySub(ActivitySub a)
-        {
-            try
-            {
-                return this._activitiesRepository.AddActivitySub(a);
-            }
-            catch (Exception ex)
-            {
-                _ilogger.LogError(ex.Message);
-                return false;
+                result res = new result();
+                res.done = false;
+                res.message = ex.Message;
+                return res;
             }
         }
 
