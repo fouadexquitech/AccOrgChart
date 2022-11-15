@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System;
 using AccOrgChart.Repository.Interfaces;
 using AccOrgChart.Repository.View_Models;
+using System.Threading.Tasks;
 
 namespace AccOrgChart.Controllers
 {
@@ -109,6 +110,19 @@ namespace AccOrgChart.Controllers
             {
                 _ilogger.LogError(ex.Message);
                 return null;
+            }
+        }
+
+        public bool DeleteWorkFlow(int wfId)
+        {
+            try
+            {
+                return this._workFlowRepository.DeleteWorkFlow(wfId);
+            }
+            catch (Exception ex)
+            {
+                _ilogger.LogError(ex.Message);
+                return false;
             }
         }
 

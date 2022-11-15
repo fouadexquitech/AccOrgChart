@@ -17,6 +17,8 @@ namespace AccOrgChart.Repository.Interfaces
         public Node GetChartOrgSubActivity(int subActId);
         public Node GetChartOrgActivity(int actId);
 
+        public bool DeleteWorkFlow(int wfId);
+
 
     }
 }

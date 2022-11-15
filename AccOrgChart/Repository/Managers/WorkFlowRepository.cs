@@ -315,6 +315,8 @@ namespace AccOrgChart.Repository.Managers
         }
 
 
+
+
         public bool UpdateWorkFlow(int wfId, int taskId, int roleId, bool updateTask, string newTaskName)
         {
             var t = _dbContext.Database.BeginTransaction();
@@ -337,6 +339,50 @@ namespace AccOrgChart.Repository.Managers
 
                 t.Commit();
                 return true;
+            }
+            catch (Exception ex)
+            {
+                t.Rollback();
+                return false;
+            }
+        }
+
+
+        public bool DeleteWorkFlow(int wfId)
+        {
+            var t = _dbContext.Database.BeginTransaction();
+            try
+            {
+                var delWf = _dbContext.TblJobWorkFlows.Where(x => x.JwId == wfId).FirstOrDefault();
+
+                if (delWf != null)
+                {
+                    var childWf = _dbContext.TblJobWorkFlows.Where(x => x.JwParentId == wfId).FirstOrDefault();
+
+                    if (childWf != null)
+                    {
+                        if (delWf.JwParentId > 0)
+                        {
+                            childWf.JwParentId = delWf.JwParentId;
+                            childWf.JwParentSubActivity = null;
+                        }
+                        else if (delWf.JwParentSubActivity > 0)
+                        {
+                            childWf.JwParentId = null;
+                            childWf.JwParentSubActivity = delWf.JwParentSubActivity;
+                        }
+                    }
+
+                    _dbContext.TblJobWorkFlows.Remove(delWf);
+                    _dbContext.SaveChanges();
+
+                    t.Commit();
+
+                    return true;
+                }
+                else
+                    return false;
+
             }
             catch (Exception ex)
             {

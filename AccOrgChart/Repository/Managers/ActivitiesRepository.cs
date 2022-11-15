@@ -273,8 +273,6 @@ namespace AccOrgChart.Repository.Managers
         #endregion
 
 
-
-
         #region "ActivityTask"
         public List<TblActivityTask> GetTasks(int actId, int subActId)
         {
