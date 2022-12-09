@@ -90,9 +90,9 @@ function buildChart() {
 
 
 function resetForm() {
-    $('#frmUpdateTask').trigger("reset");
+    $('#frmAddTask').trigger("reset");
     $('#chkTask').attr("checked", false);
-    $('#txtTaskDesc').attr("readonly", true);
+    //$('#txtTaskDesc').attr("readonly", true);
     $('#ddlVerbs').attr("readonly", true);
     subActivityMode = 'add';
     wfMode = 'add';
@@ -123,17 +123,17 @@ $(document).ready(function () {
         };
     }, "<span class='text-danger'>Required Field</span>");
 
-    $("#frmUpdateTask").validate({
+    $("#frmAddTask").validate({
         rules: {
             ddlRoles: {
                 requiredSelect: true
 
             },
-            ddlTasks: {
+            /*ddlTasks: {
                 requiredSelect: true,
 
-            },
-            ddlVerb: {
+            },*/
+            ddlVerbs: {
                 requiredSelect: true,
 
             },
@@ -192,7 +192,7 @@ $(document).ready(function () {
                     getVerbs(0);
                     $('#chkTask').attr('checked', false);
                     $('#txtTaskDesc').val('');
-                    $('#txtTaskDesc').attr('readonly', true);
+                    //$('#txtTaskDesc').attr('readonly', true);
                     $('#ddlVerbs').attr('readonly', true);
                     
                     $('#modalContent').modal('show');
@@ -221,7 +221,7 @@ $(document).ready(function () {
                     getVerbs(0);
                     $('#chkTask').attr('checked', false);
                     $('#txtTaskDesc').val('');
-                    $('#txtTaskDesc').attr('readonly', true);
+                    //$('#txtTaskDesc').attr('readonly', true);
                     $('#ddlVerbs').attr('readonly', true);
                     
                     $('#modalContent').modal('show');
@@ -315,23 +315,23 @@ function deleteSubActivity(id)
         });
 }
 
-function submitForm() {
-    if ($("#frmUpdateTask").valid()) {
+function submitAddTaskForm() {
+    if ($("#frmAddTask").valid()) {
         var taskId = $('#ddlTasks').val();
         roleId = $('#ddlRoles').val();
-        var updateTask = $('#chkTask').prop('checked');
+        //var updateTask = $('#chkTask').prop('checked');
         var newTaskName = $('#txtTaskDesc').val();
         var verbId = $('#ddlVerbs').val();
 
-        var url = '/WorkFlow/UpdateWorkFlow?wfId=' + selectedNodeId + '&taskId=' + taskId + '&roleId=' + roleId + '&updateTask=' + updateTask + '&newTaskName=' + newTaskName + '&verbId=' + verbId;
-        if (wfMode == 'add') {
+        url = '/WorkFlow/AddWorkFlow?parentId=' + selectedNodeId + '&taskId=' + taskId + '&roleId=' + roleId + '&updateTask=false&newTaskName=' + newTaskName + '&verbId=' + verbId;
+        /*if (wfMode == 'add') {
             if (wfAddMode == 1) {
                 url = '/WorkFlow/AddWorkFlow?parentId=' + selectedNodeId + '&taskId=' + taskId + '&roleId=' + roleId + '&updateTask=' + updateTask + '&newTaskName=' + newTaskName + '&verbId=' + verbId;
             }
             else if (wfAddMode == 2) {
                 url = '/WorkFlow/AddWorkflowToSubActivity?SubActivityId=' + selectedNodeId + '&taskId=' + taskId + '&roleId=' + roleId + '&updateTask=' + updateTask + '&newTaskName=' + newTaskName + '&verbId=' + verbId;
             }
-        }
+        }*/
         $.ajax({
             'url': url,
             'dataType': 'json'
