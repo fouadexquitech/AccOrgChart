@@ -26,6 +26,9 @@ namespace AccOrgChart.Repository.Models.HR_StatisticsModels
         public string? ActId { get; set; }
         [Unicode(false)]
         public string? SubAct { get; set; }
+        [Column("subActId")]
+        [Unicode(false)]
+        public string? SubActId { get; set; }
         [Unicode(false)]
         public string? Task { get; set; }
         [Column("TaskID")]

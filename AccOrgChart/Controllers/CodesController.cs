@@ -20,7 +20,6 @@ namespace AccOrgChart.Controllers
             _codesRepository = codesRepository;
         }
 
-
         public List<TblCode> GetCodesByType(int type)
         {
             try
@@ -31,8 +30,20 @@ namespace AccOrgChart.Controllers
             {
                 _ilogger.LogError(ex.Message);
                 return null;
+            }           
+        }
+
+        public List<TblVerb> GetVerbsList()
+        {
+            try
+            {
+                return this._codesRepository.GetVerbsList();
             }
-            
+            catch (Exception ex)
+            {
+                _ilogger.LogError(ex.Message);
+                return null;
+            }
         }
     }
 }

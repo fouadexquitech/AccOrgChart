@@ -99,9 +99,21 @@ namespace AccOrgChart.Repository.Managers
 
 
         #region "Activities"
-        public List<TblActivity> GetActivities()
+        public List<TblActivity> GetActivities(string user, bool isAdmin)
         {
-            return _StatisticsDbContext.TblActivities.OrderBy(x => x.ActDesc).ToList(); ;
+            var result = new List<TblActivity>();
+
+            if (! isAdmin)
+            {
+                result = (from b in _StatisticsDbContext.TblActivities
+                          join c in _StatisticsDbContext.TblPermGrpUsrs on b.ActDesc equals c.PrmFuncId
+                          where c.PrmUser == user && c.MinOfprmRead==1
+                          select b).ToList();
+            }
+            else
+                result= _StatisticsDbContext.TblActivities.OrderBy(x => x.ActDesc).ToList();
+
+            return result;
         }
 
         public List<TblActivity> GetActivity(int id)
@@ -200,7 +212,7 @@ namespace AccOrgChart.Repository.Managers
 
             if (subAct != null)
             {
-                var task = _StatisticsDbContext.TblJobWorkFlows.Where(x => x.JwParentSubActivity == subActId);
+                var task = _StatisticsDbContext.TblJobWorkFlows.Where(x => x.JwParentSubActivity == subActId).FirstOrDefault();
 
                 if (task != null)
                 {

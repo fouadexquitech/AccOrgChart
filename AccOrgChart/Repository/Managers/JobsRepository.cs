@@ -16,5 +16,7 @@ namespace AccOrgChart.Repository.Managers
         {
             return  _dbContext.TblRoles.OrderBy(x => x.RoleDesc).ToList();
         }
+
+
     }
 }

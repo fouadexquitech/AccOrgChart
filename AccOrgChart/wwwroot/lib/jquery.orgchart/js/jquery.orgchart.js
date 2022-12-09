@@ -1271,6 +1271,7 @@
             (data[opts.nodeId] ? ' id="' + data[opts.nodeId] + '"' : '') +
             (data.parentId ? ' data-parent="' + data.parentId + '"' : '') +
             (data.roleId ? ' data-role-id="' + data.roleId + '"' : '') +
+            (data.verbId ? ' data-verb-id="' + data.verbId + '"' : '') +
             (data.roleName ? ' data-role-name="' + data.roleName + '"' : '') +
             (data.taskId ? ' data-task-id="' + data.taskId + '"' : '') +
             (data.taskName ? ' data-task-name="' + data.taskName + '"' : '') +

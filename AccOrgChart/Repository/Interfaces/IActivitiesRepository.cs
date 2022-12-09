@@ -12,7 +12,7 @@ namespace AccOrgChart.Repository.Interfaces
         public bool AddActivityGroup(ActivityGroup act);
 
 
-        public List<TblActivity> GetActivities();
+        public List<TblActivity> GetActivities(string user, bool isAdmin);
         public List<TblActivity> GetActivity(int id);
         public bool UpdateActivity(Activities act);
         public bool DelActivity(int id);

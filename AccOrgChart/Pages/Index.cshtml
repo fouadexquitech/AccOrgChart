@@ -10,6 +10,9 @@
     }
 </style>
 <link rel="stylesheet" href="~/lib/jquery.contextmenu/jquery.contextMenu.css" />
+
+@*<div id="" style="overflow-x:scroll; overflow-y:hidden;">*@
+
 <div class="row">
     <div class="col-6 p-2">
          <strong>Activity</strong>
@@ -24,7 +27,7 @@
 <div class="row">
     <div class="col-12 p-2">
         <div class="text-center">
-            <div id="chart-container" style="max-width : 100%; min-height : 100%; overflow : auto"></div>
+            <div id="chart-container" style="max-width : 100%; min-height : 100%; overflow:scroll;"></div>
         </div>
     </div>
 </div>
@@ -59,7 +62,7 @@
         </div>
     </div>
 </div>
-
+@*</div>*@
 
 <div class="modal" id="modalContent" tabindex="-1">
     <div class="modal-dialog modal-lg modal-dialog-centered">
@@ -77,21 +80,27 @@
                             <select id="ddlRoles" name="ddlRoles" class="form-select">
                             </select>
                         </div>
+
                         <div class="form-group p-3">
                             <label>Task</label>
                             <select id="ddlTasks" name="ddlTasks" class="form-select" onchange="onTaskChange(this)">
                             </select>
                         </div>
+
+
                         <div class="form-group p-3">
                             <div class="form-check">
                                 <input type="checkbox" id="chkTask" onchange="changeTaskDesc(this)" class="form-check-input" value="Change Task Name" />
                                 <label class="form-check-label" for="flexCheckDefault">
-                                    Edit Task Description
+                                    Edit Task
                                 </label>
                             </div>
 
+                            <label>Task Verb</label>
+                            <select id="ddlVerbs" name="ddlVerbs" class="form-select" readonly="readonly" disabled />
+                                                      
                             <input id="txtTaskDesc" name="txtTaskDesc" class="form-control" readonly="readonly" />
-
+                                                      
                         </div>
                     </div>
 

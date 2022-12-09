@@ -37,6 +37,7 @@ namespace AccOrgChart.Repository
         public virtual DbSet<TblHrcode> TblHrcodes { get; set; } = null!;
         public virtual DbSet<TblHrtopPerfPercent> TblHrtopPerfPercents { get; set; } = null!;
         public virtual DbSet<TblJobWorkFlow> TblJobWorkFlows { get; set; } = null!;
+        public virtual DbSet<TblPermGrpUsr> TblPermGrpUsrs { get; set; } = null!;
         public virtual DbSet<TblRndSel> TblRndSels { get; set; } = null!;
         public virtual DbSet<TblRole> TblRoles { get; set; } = null!;
         public virtual DbSet<TblRoleCompetencyLevel> TblRoleCompetencyLevels { get; set; } = null!;
@@ -88,6 +89,10 @@ namespace AccOrgChart.Repository
                     .HasName("PK_tblActivitiesSub");
 
                 entity.Property(e => e.SacSeq).ValueGeneratedOnAdd();
+
+                entity.Property(e => e.ProposedApproved).HasDefaultValueSql("((0))");
+
+                entity.Property(e => e.ProposedNew).HasDefaultValueSql("((0))");
 
                 entity.Property(e => e.SacSort).HasDefaultValueSql("((0))");
             });
@@ -154,15 +159,38 @@ namespace AccOrgChart.Repository
                 entity.HasKey(e => e.JwId)
                     .HasName("PK_tblJobTasks");
 
+                entity.Property(e => e.Deleted).HasDefaultValueSql("((0))");
+
                 entity.Property(e => e.InsertedDate).HasDefaultValueSql("(getdate())");
 
                 entity.Property(e => e.JwParentId).HasDefaultValueSql("((0))");
 
                 entity.Property(e => e.JwParentSubActivity).HasDefaultValueSql("((0))");
 
+                entity.Property(e => e.JwProposedAction).HasDefaultValueSql("((0))");
+
+                entity.Property(e => e.JwProposedApproved).HasDefaultValueSql("((0))");
+
+                entity.Property(e => e.JwProposedJobId).HasDefaultValueSql("((0))");
+
+                entity.Property(e => e.JwProposedNew).HasDefaultValueSql("((0))");
+
                 entity.Property(e => e.JwRaci).HasDefaultValueSql("((0))");
 
                 entity.Property(e => e.JwVerb).HasDefaultValueSql("((0))");
+            });
+
+            modelBuilder.Entity<TblPermGrpUsr>(entity =>
+            {
+                entity.Property(e => e.MinOfprmDelete).HasDefaultValueSql("((0))");
+
+                entity.Property(e => e.MinOfprmRead).HasDefaultValueSql("((0))");
+
+                entity.Property(e => e.MinOfprmUpdPeriod).HasDefaultValueSql("((0))");
+
+                entity.Property(e => e.MinOfprmUpdate).HasDefaultValueSql("((0))");
+
+                entity.Property(e => e.MinOfprmWrite).HasDefaultValueSql("((0))");
             });
 
             modelBuilder.Entity<TblRndSel>(entity =>

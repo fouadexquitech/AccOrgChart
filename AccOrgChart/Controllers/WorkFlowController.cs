@@ -33,11 +33,11 @@ namespace AccOrgChart.Controllers
             }
         }
 
-        public bool AddWorkFlow(int parentId, int TaskId, int RoleId, bool updateTask, string newTaskName)
+        public bool AddWorkFlow(int parentId, int TaskId, int RoleId, bool updateTask, string newTaskName, int verbId, string proposedUser)
         {
             try
             {
-                return this._workFlowRepository.AddWorkFlow(parentId,  TaskId,  RoleId,  updateTask,  newTaskName);
+                return this._workFlowRepository.AddWorkFlow(parentId,  TaskId,  RoleId,  updateTask,  newTaskName,verbId, proposedUser);
             }
             catch (Exception ex)
             {
@@ -47,11 +47,11 @@ namespace AccOrgChart.Controllers
         }
 
 
-        public bool AddWorkflowToSubActivity(int SubActivityId, int TaskId, int RoleId, bool updateTask, string newTaskName)
+        public bool AddWorkflowToSubActivity(int SubActivityId, int TaskId, int RoleId, bool updateTask, string newTaskName, int verbId, string proposedUser)
         {
             try
             {
-                return this._workFlowRepository.AddWorkflowToSubActivity(SubActivityId,  TaskId,  RoleId, updateTask, newTaskName);
+                return this._workFlowRepository.AddWorkflowToSubActivity(SubActivityId,  TaskId,  RoleId, updateTask, newTaskName,verbId, proposedUser);
             }
             catch (Exception ex)
             {
@@ -73,11 +73,11 @@ namespace AccOrgChart.Controllers
             }
         }
 
-        public bool UpdateWorkFlow(int wfId, int taskId, int roleId, bool updateTask, string newTaskName)
+        public bool UpdateWorkFlow(int wfId, int taskId, int roleId, bool updateTask, string newTaskName,int verbId, int proposedRoleId, int proposedVerbId, string proposedTaskName, string proposedUser)
         {
             try
             {
-                return this._workFlowRepository.UpdateWorkFlow(wfId,taskId,roleId, updateTask, newTaskName);
+                return this._workFlowRepository.UpdateWorkFlow(wfId,taskId,roleId, updateTask, newTaskName, verbId,  proposedRoleId,  proposedVerbId,  proposedTaskName,  proposedUser);
             }
             catch (Exception ex)
             {

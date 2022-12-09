@@ -26,5 +26,10 @@ namespace AccOrgChart.Repository.Managers
             return result;
 
         }
+
+        public List<TblVerb> GetVerbsList()
+        {
+            return _StatisticsDbContext.TblVerbs.OrderBy(x => x.VerbDesc).ToList(); 
+        }
     }
 }

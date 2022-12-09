@@ -7,5 +7,7 @@ namespace AccOrgChart.Repository.Interfaces
     public interface ICodesRepository
     {
         public List<TblCode> GetCodesByType(int type);
+
+        public List<TblVerb> GetVerbsList();
     }
 }

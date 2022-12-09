@@ -93,6 +93,7 @@ function resetForm() {
     $('#frmUpdateTask').trigger("reset");
     $('#chkTask').attr("checked", false);
     $('#txtTaskDesc').attr("readonly", true);
+    $('#ddlVerbs').attr("readonly", true);
     subActivityMode = 'add';
     wfMode = 'add';
     wfAddMode = 0;
@@ -132,11 +133,13 @@ $(document).ready(function () {
                 requiredSelect: true,
 
             },
+            ddlVerb: {
+                requiredSelect: true,
+
+            },
             txtTaskDesc: {
                 requiredInput: true
             }
-
-
         }
     });
 
@@ -160,6 +163,8 @@ $(document).ready(function () {
             let roleId = $(this).attr('data-role-id');
             let taskId = $(this).attr('data-task-id');
             let taskName = $(this).attr('data-task-name');
+            let verbId = $(this).attr('data-verb-id');
+
             resetForm();
             selectedNodeId = id;
            
@@ -170,8 +175,10 @@ $(document).ready(function () {
                     $('#spanWfTitle').text('Edit');
                     $('#spanModalContentTitle').text(roleName);
                     $('#ddlRoles').val(roleId);
+                    $('#ddlVerbs').val(verbId);
                     getTasks(0, 0, taskId);
                     getRoles(roleId);
+                    getVerbs(verbId);
                     $('#txtTaskDesc').val(taskName);
                     $('#modalContent').modal('show');
                 }
@@ -182,9 +189,12 @@ $(document).ready(function () {
                     $('#spanModalContentTitle').text(roleName);
                     getTasks(0, 0, 0);
                     getRoles(0);
+                    getVerbs(0);
                     $('#chkTask').attr('checked', false);
                     $('#txtTaskDesc').val('');
                     $('#txtTaskDesc').attr('readonly', true);
+                    $('#ddlVerbs').attr('readonly', true);
+                    
                     $('#modalContent').modal('show');
                 }
                 else if (key == 'delete') {
@@ -208,9 +218,12 @@ $(document).ready(function () {
                     $('#spanModalContentTitle').text(roleName);
                     getTasks(0, 0, 0);
                     getRoles(0);
+                    getVerbs(0);
                     $('#chkTask').attr('checked', false);
                     $('#txtTaskDesc').val('');
                     $('#txtTaskDesc').attr('readonly', true);
+                    $('#ddlVerbs').attr('readonly', true);
+                    
                     $('#modalContent').modal('show');
                 }
                 else if (key == 'delete') {
@@ -248,8 +261,6 @@ $(document).ready(function () {
             }*/
         }
     });
-
-    
 });
 
 function deleteWorkflow(wfId) {
@@ -310,14 +321,15 @@ function submitForm() {
         roleId = $('#ddlRoles').val();
         var updateTask = $('#chkTask').prop('checked');
         var newTaskName = $('#txtTaskDesc').val();
-        
-        var url = '/WorkFlow/UpdateWorkFlow?wfId=' + selectedNodeId + '&taskId=' + taskId + '&roleId=' + roleId + '&updateTask=' + updateTask + '&newTaskName=' + newTaskName;
+        var verbId = $('#ddlVerbs').val();
+
+        var url = '/WorkFlow/UpdateWorkFlow?wfId=' + selectedNodeId + '&taskId=' + taskId + '&roleId=' + roleId + '&updateTask=' + updateTask + '&newTaskName=' + newTaskName + '&verbId=' + verbId;
         if (wfMode == 'add') {
             if (wfAddMode == 1) {
-                url = '/WorkFlow/AddWorkFlow?parentId=' + selectedNodeId + '&taskId=' + taskId + '&roleId=' + roleId + '&updateTask=' + updateTask + '&newTaskName=' + newTaskName;
+                url = '/WorkFlow/AddWorkFlow?parentId=' + selectedNodeId + '&taskId=' + taskId + '&roleId=' + roleId + '&updateTask=' + updateTask + '&newTaskName=' + newTaskName + '&verbId=' + verbId;
             }
             else if (wfAddMode == 2) {
-                url = '/WorkFlow/AddWorkflowToSubActivity?SubActivityId=' + selectedNodeId + '&taskId=' + taskId + '&roleId=' + roleId + '&updateTask=' + updateTask + '&newTaskName=' + newTaskName;
+                url = '/WorkFlow/AddWorkflowToSubActivity?SubActivityId=' + selectedNodeId + '&taskId=' + taskId + '&roleId=' + roleId + '&updateTask=' + updateTask + '&newTaskName=' + newTaskName + '&verbId=' + verbId;
             }
         }
         $.ajax({
@@ -368,19 +380,33 @@ function submitFormSubActivity()
     }
 }
 
+
 function changeTaskDesc(sender) {
     let checked = $(sender).prop('checked');
     $('#txtTaskDesc').prop('readonly', !checked)
+
+    if (checked) {
+        $('#ddlVerbs').prop('disabled', false);
+        //$('#ddlVerbs').removeAttr("disabled")
+    }
+    else {
+        $('#ddlVerbs').prop('disabled', true);
+        
+    }
+
 }
+
 
 function onTaskChange(sender) {
     $('#txtTaskDesc').val(sender.options[sender.selectedIndex].text);
 }
 
+
 function changeSubActivityDesc(sender) {
     let checked = $(sender).prop('checked');
     $('#txtSubActivityDesc').prop('readonly', !checked)
 }
+
 
 function getRoles(selectedRoleId) {
     $.ajax({
@@ -405,6 +431,31 @@ function getRoles(selectedRoleId) {
         })
 }
 
+
+function getVerbs(selectedVerbId) {
+    $.ajax({
+        'url': '/Codes/GetVerbsList',
+        'dataType': 'json'
+    })
+        .done(function (data, textStatus, jqXHR) {
+            let $select = $('#ddlVerbs');
+
+            if ($select) {
+                $select.find('option').remove();
+                $select.append('<option value="0"></option>');
+                data.forEach(el => {
+                    $select.append('<option value="' + el.verbId + '">' + el.verbDesc + '</option>');
+                });
+
+                $select.val(selectedVerbId);
+            }
+        })
+        .fail(function (jqXHR, textStatus, errorThrown) {
+            console.log(errorThrown);
+        })
+}
+
+
 function getSubActivities() {
     $.ajax({
         'url': '/Activities/GetSubActivities',
@@ -423,6 +474,7 @@ function getSubActivities() {
             console.log(errorThrown);
         })
 }
+
 
 function subActivityChange(sender) {
 

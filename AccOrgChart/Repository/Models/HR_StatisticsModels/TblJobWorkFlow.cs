@@ -13,10 +13,10 @@ namespace AccOrgChart.Repository.Models.HR_StatisticsModels
         [Key]
         [Column("jwId")]
         public int JwId { get; set; }
-        [Column("jwJobID")]
-        public int JwJobId { get; set; }
-        [Column("jwTaskID")]
-        public int JwTaskId { get; set; }
+        [Column("jwJobId")]
+        public int? JwJobId { get; set; }
+        [Column("jwTaskId")]
+        public int? JwTaskId { get; set; }
         [Column("jwRACI")]
         public int? JwRaci { get; set; }
         [Column("jwVerb")]
@@ -79,13 +79,27 @@ namespace AccOrgChart.Repository.Models.HR_StatisticsModels
         [StringLength(1000)]
         [Unicode(false)]
         public string? JwProposedTask3 { get; set; }
+        [Column("jwProposedVerbTask1")]
+        public int? JwProposedVerbTask1 { get; set; }
+        [Column("jwProposedVerbTask2")]
+        public int? JwProposedVerbTask2 { get; set; }
+        [Column("jwProposedVerbTask3")]
+        public int? JwProposedVerbTask3 { get; set; }
+        [Column("jwProposedJobId")]
+        public int? JwProposedJobId { get; set; }
+        [Column("jwProposedAction")]
+        public int? JwProposedAction { get; set; }
+        [Column("jwProposedNew")]
+        public byte? JwProposedNew { get; set; }
+        [Column("jwProposedApproved")]
+        public byte? JwProposedApproved { get; set; }
         [Column("jwProposedBy")]
         [StringLength(100)]
         [Unicode(false)]
         public string? JwProposedBy { get; set; }
-        [Column("jwProposedAction")]
-        [StringLength(50)]
-        [Unicode(false)]
-        public string? JwProposedAction { get; set; }
+        [Column("jwProposedDate", TypeName = "datetime")]
+        public DateTime? JwProposedDate { get; set; }
+        [Column("deleted")]
+        public byte? Deleted { get; set; }
     }
 }

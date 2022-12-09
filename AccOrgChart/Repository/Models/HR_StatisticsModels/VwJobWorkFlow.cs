@@ -28,12 +28,14 @@ namespace AccOrgChart.Repository.Models.HR_StatisticsModels
         public int JwId { get; set; }
         [Column("jwParentId")]
         public int? JwParentId { get; set; }
+        [Column("jwParentSubActivity")]
+        public int? JwParentSubActivity { get; set; }
         public int GroupId { get; set; }
         public int ActivityId { get; set; }
         public int SubActivityId { get; set; }
         public int TaskId { get; set; }
         public int RoleId { get; set; }
-        [Column("jwTaskID")]
+        [Column("jwTaskId")]
         public int JwTaskId { get; set; }
         [Column("jwRACI")]
         public int? JwRaci { get; set; }
@@ -77,8 +79,6 @@ namespace AccOrgChart.Repository.Models.HR_StatisticsModels
         public string? UpdatedBy { get; set; }
         [Column(TypeName = "datetime")]
         public DateTime? UpdatedDate { get; set; }
-        [Column("jwParentSubActivity")]
-        public int? JwParentSubActivity { get; set; }
         [Column("jwProposedSubAct")]
         [StringLength(500)]
         [Unicode(false)]
@@ -96,12 +96,24 @@ namespace AccOrgChart.Repository.Models.HR_StatisticsModels
         [Unicode(false)]
         public string? JwProposedBy { get; set; }
         [Column("jwProposedAction")]
-        [StringLength(50)]
-        [Unicode(false)]
-        public string? JwProposedAction { get; set; }
+        public int? JwProposedAction { get; set; }
         [Column("jwProposedTask3")]
         [StringLength(1000)]
         [Unicode(false)]
         public string? JwProposedTask3 { get; set; }
+        [Column("jwProposedVerbTask1")]
+        public int? JwProposedVerbTask1 { get; set; }
+        [Column("jwProposedVerbTask2")]
+        public int? JwProposedVerbTask2 { get; set; }
+        [Column("jwProposedVerbTask3")]
+        public int? JwProposedVerbTask3 { get; set; }
+        [Column("jwProposedJobId")]
+        public int? JwProposedJobId { get; set; }
+        [Column("jwProposedNew")]
+        public byte? JwProposedNew { get; set; }
+        [Column("jwProposedApproved")]
+        public byte? JwProposedApproved { get; set; }
+        [Column("jwProposedDate", TypeName = "datetime")]
+        public DateTime? JwProposedDate { get; set; }
     }
 }

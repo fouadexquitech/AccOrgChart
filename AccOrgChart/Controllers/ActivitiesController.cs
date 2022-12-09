@@ -79,11 +79,12 @@ namespace AccOrgChart.Controllers
 
 
         #region "Activity"
-        public List<TblActivity> GetActivities()
+        public List<TblActivity> GetActivities(string user, bool isAdmin)
         {
+            isAdmin = true;
             try
             {
-                return this._activitiesRepository.GetActivities();
+                return this._activitiesRepository.GetActivities(  user, isAdmin);
             }
             catch (Exception ex)
             {

@@ -9,8 +9,10 @@
     <link rel="stylesheet" href="~/lib/jquery.orgchart/css/jquery.orgchart.css" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.6.8/dist/sweetalert2.css" />
     <link rel="stylesheet" href="~/AccOrgChart.styles.css" asp-append-version="true" />
+
+
 </head>
-<body>
+<body >
     <header>
         <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-brand border-bottom box-shadow mb-3">
             <div class="container">
@@ -32,15 +34,16 @@
             </div>
         </nav>
     </header>
-    <div class="container-fluid">
-        <main role="main" class="pb-3">
+    <div class="container-fluid" >
+        <main role="main" class="pb-3" >
+            
             @RenderBody()
         </main>
     </div>
 
     <footer class="border-top footer text-muted">
         <div class="container">
-            &copy; 2022 - Powered By Inspire
+            &copy; 2022 - Powered By ACC IT Department
         </div>
     </footer>
 
