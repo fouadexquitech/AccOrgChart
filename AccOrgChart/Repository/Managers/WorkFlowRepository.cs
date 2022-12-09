@@ -40,12 +40,17 @@ namespace AccOrgChart.Repository.Managers
                     //Proposed Job
                     if ((root.JwProposedJobId ?? 0)> 0 & ((root.JwProposedApproved ?? 0) != 2))
                     {
-                        mainNode.RoleId = root.JwProposedJobId;
+                        mainNode.proposedRoleId = root.JwProposedJobId;
                         mainNode.porposedBy = root.JwProposedBy;
-                    }
-                    else
-                        mainNode.RoleId = root.RoleId;
 
+                        var propRole = roles.Where(x => x.RoleId == mainNode.proposedRoleId).FirstOrDefault();
+                        if (propRole != null)
+                        {
+                            mainNode.proposedRoleName = propRole?.RoleDesc;
+                        }
+                    }
+                    
+                    mainNode.RoleId = root.RoleId;
                     var role = roles.Where(x => x.RoleId == mainNode.RoleId).FirstOrDefault();              
                     if (role != null)
                     {
@@ -56,12 +61,17 @@ namespace AccOrgChart.Repository.Managers
                     //Proposed Verb
                     if ((root.JwProposedVerbTask1 ?? 0) > 0 & ((root.JwProposedApproved ?? 0) != 2))
                     {
-                        mainNode.verbId = root.JwProposedVerbTask1;
+                        mainNode.proposedverbId = root.JwProposedVerbTask1;
                         mainNode.porposedBy = root.JwProposedBy;
-                    }
-                    else
-                        mainNode.verbId = root.JwVerb;
 
+                        var propVerb = verbs.Where(x => x.VerbId == mainNode.proposedverbId).FirstOrDefault();
+                        if (propVerb != null)
+                        {
+                            mainNode.proposedverbName = propVerb?.VerbDesc;
+                        }
+                    }
+                    
+                    mainNode.verbId = root.JwVerb;
                     var verb = verbs.Where(x => x.VerbId == mainNode.verbId).FirstOrDefault();
                     if (verb != null)
                     {
@@ -69,22 +79,20 @@ namespace AccOrgChart.Repository.Managers
                     }
 
 
-                    //Proposed Task
-                    mainNode.TaskId = root.TaskId;
-
+                    //Proposed Task                  
                     if ((root.JwProposedTask1 ?? "") != "" & ((root.JwProposedApproved ?? 0) != 2))
                     {
-                        mainNode.TaskName = root.JwProposedTask1;
+                        mainNode.proposedTaskName = root.JwProposedTask1;
                         mainNode.porposedBy = root.JwProposedBy;
                     }
-                    else
+
+                    mainNode.TaskId = root.TaskId;
+                    var task = tasks.Where(x => x.TskSeq == root.TaskId).FirstOrDefault();
+                    if (task != null)
                     {
-                        var task = tasks.Where(x => x.TskSeq == root.TaskId).FirstOrDefault();
-                        if (task != null)
-                        {
-                            mainNode.TaskName = task?.TskDesc;
-                        }
+                        mainNode.TaskName = task?.TskDesc;
                     }
+
 
                     GetChildrenNodes(mainNode, roles, verbs, tasks, workFlows, 1);
                 }
@@ -117,49 +125,59 @@ namespace AccOrgChart.Repository.Managers
                     //Proposed Job
                     if ((workflow.JwProposedJobId ?? 0 )> 0 & ((workflow.JwProposedApproved ?? 0) != 2))
                     {
-                        childNode.RoleId = workflow.JwProposedJobId;
+                        childNode.proposedRoleId = workflow.JwProposedJobId;
                         childNode.porposedBy = workflow.JwProposedBy;
-                    }
-                    else
-                        childNode.RoleId = workflow.RoleId;
 
+                        var propRole = roles.Where(x => x.RoleId == childNode.proposedRoleId).FirstOrDefault();
+                        if (propRole != null)
+                        {
+                            childNode.proposedRoleName = propRole?.RoleDesc;
+                        }
+                    }
+                    
+                    childNode.RoleId = workflow.RoleId;
                     var role = roles.Where(x => x.RoleId == childNode.RoleId).FirstOrDefault();
                     if (role != null)
                     {
                         childNode.RoleName = role?.RoleDesc;
                     }
 
+
                     //Proposed Verb
                     if ((workflow.JwProposedVerbTask1 ?? 0) > 0 & ((workflow.JwProposedApproved ?? 0) != 2))
-                    {
-                        childNode.verbId = workflow.JwProposedVerbTask1;
+                    {                      
+                        childNode.proposedverbId = workflow.JwProposedVerbTask1;                       
                         childNode.porposedBy = workflow.JwProposedBy;
-                    }
-                    else
-                        childNode.verbId = workflow.JwVerb;
 
+                        var propVerb = verbs.Where(x => x.VerbId == childNode.proposedverbId).FirstOrDefault();
+                        if (propVerb != null)
+                        {
+                            childNode.proposedverbName = propVerb?.VerbDesc;
+                        }
+                    }
+                                      
+                    childNode.verbId = workflow.JwVerb;
                     var verb = verbs.Where(x => x.VerbId == childNode.verbId).FirstOrDefault();
                     if (verb != null)
                     {
                         childNode.verbName = verb?.VerbDesc;
                     }
 
+
                     //Proposed Task
-                    if ((workflow.JwProposedTask1 ?? "") != "" & ((workflow.JwProposedApproved ?? 0) !=  2))
+                    if ((workflow.JwProposedTask1 ?? "") != "" & ((workflow.JwProposedApproved ?? 0) != 2))
                     {
-                        childNode.TaskName = workflow.JwProposedTask1;
+                        childNode.proposedTaskName = workflow.JwProposedTask1;
                         childNode.porposedBy = workflow.JwProposedBy;
                     }
-                    else
-                    {
-                        childNode.TaskId = workflow.TaskId;
 
-                        var task = tasks.Where(x => x.TskSeq == childNode.TaskId).FirstOrDefault();
-                        if (task != null)
-                        {
-                            childNode.TaskName = task?.TskDesc;
-                        }
+                    childNode.TaskId = workflow.TaskId;
+                    var task = tasks.Where(x => x.TskSeq == childNode.TaskId).FirstOrDefault();
+                    if (task != null)
+                    {
+                        childNode.TaskName = task?.TskDesc;
                     }
+
 
 
                     childNodes.Add(childNode);
