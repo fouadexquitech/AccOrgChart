@@ -1,4 +1,6 @@
-﻿namespace AccOrgChart.Repository.View_Models
+﻿using System.Reflection.Metadata.Ecma335;
+
+namespace AccOrgChart.Repository.View_Models
 {
     public class Node
     {
@@ -19,7 +21,7 @@
         public string? proposedverbName { get; set; }
         public string? proposedTaskName { get; set; }
         public string? porposedBy { get; set; }
-
+        public bool porposedExist { get; set; }
 
         public List<Node>? Children { get; set; }
         public int? Type { get; set; }

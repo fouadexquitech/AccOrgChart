@@ -36,22 +36,28 @@ namespace AccOrgChart.Repository.Managers
                     mainNode = new Node();
                     mainNode.Id = root.JwId;
                     mainNode.Type = 1;
+                    mainNode.porposedExist = false;
+
 
                     //Proposed Job
-                    if ((root.JwProposedJobId ?? 0)> 0 & ((root.JwProposedApproved ?? 0) != 2))
+                    if ((root.JwProposedJobId ?? 0) > 0 & ((root.JwProposedApproved ?? 0) != 2))
                     {
                         mainNode.proposedRoleId = root.JwProposedJobId;
                         mainNode.porposedBy = root.JwProposedBy;
-
-                        var propRole = roles.Where(x => x.RoleId == mainNode.proposedRoleId).FirstOrDefault();
-                        if (propRole != null)
-                        {
-                            mainNode.proposedRoleName = propRole?.RoleDesc;
-                        }
+                        mainNode.porposedExist = true;
                     }
-                    
+
+                    if ((mainNode.proposedRoleId ?? 0) == 0)
+                        mainNode.proposedRoleId = root.RoleId;
+
+                    var propRole = roles.Where(x => x.RoleId == mainNode.proposedRoleId).FirstOrDefault();
+                    if (propRole != null)
+                    {
+                        mainNode.proposedRoleName = propRole?.RoleDesc;
+                    }
+
                     mainNode.RoleId = root.RoleId;
-                    var role = roles.Where(x => x.RoleId == mainNode.RoleId).FirstOrDefault();              
+                    var role = roles.Where(x => x.RoleId == mainNode.RoleId).FirstOrDefault();
                     if (role != null)
                     {
                         mainNode.RoleName = role?.RoleDesc;
@@ -63,14 +69,18 @@ namespace AccOrgChart.Repository.Managers
                     {
                         mainNode.proposedverbId = root.JwProposedVerbTask1;
                         mainNode.porposedBy = root.JwProposedBy;
-
-                        var propVerb = verbs.Where(x => x.VerbId == mainNode.proposedverbId).FirstOrDefault();
-                        if (propVerb != null)
-                        {
-                            mainNode.proposedverbName = propVerb?.VerbDesc;
-                        }
+                        mainNode.porposedExist = true;
                     }
-                    
+
+                    if ((mainNode.proposedverbId ?? 0) == 0)
+                        mainNode.proposedverbId = root.JwVerb;
+
+                    var propVerb = verbs.Where(x => x.VerbId == mainNode.proposedverbId).FirstOrDefault();
+                    if (propVerb != null)
+                    {
+                        mainNode.proposedverbName = propVerb?.VerbDesc;
+                    }
+
                     mainNode.verbId = root.JwVerb;
                     var verb = verbs.Where(x => x.VerbId == mainNode.verbId).FirstOrDefault();
                     if (verb != null)
@@ -79,20 +89,23 @@ namespace AccOrgChart.Repository.Managers
                     }
 
 
-                    //Proposed Task                  
+                    //Proposed Task
                     if ((root.JwProposedTask1 ?? "") != "" & ((root.JwProposedApproved ?? 0) != 2))
                     {
                         mainNode.proposedTaskName = root.JwProposedTask1;
                         mainNode.porposedBy = root.JwProposedBy;
+                        mainNode.porposedExist = true;
                     }
 
                     mainNode.TaskId = root.TaskId;
-                    var task = tasks.Where(x => x.TskSeq == root.TaskId).FirstOrDefault();
+                    var task = tasks.Where(x => x.TskSeq == mainNode.TaskId).FirstOrDefault();
                     if (task != null)
                     {
                         mainNode.TaskName = task?.TskDesc;
                     }
 
+                    if ((mainNode.proposedTaskName ?? "") == "")
+                        mainNode.proposedTaskName = task?.TskDesc;
 
                     GetChildrenNodes(mainNode, roles, verbs, tasks, workFlows, 1);
                 }
@@ -121,20 +134,25 @@ namespace AccOrgChart.Repository.Managers
                     var childNode = new Node();
                     childNode.Id = workflow.JwId;
                     childNode.Type = 3;
+                    childNode.porposedExist = false;
 
                     //Proposed Job
                     if ((workflow.JwProposedJobId ?? 0 )> 0 & ((workflow.JwProposedApproved ?? 0) != 2))
                     {
                         childNode.proposedRoleId = workflow.JwProposedJobId;
                         childNode.porposedBy = workflow.JwProposedBy;
-
-                        var propRole = roles.Where(x => x.RoleId == childNode.proposedRoleId).FirstOrDefault();
-                        if (propRole != null)
-                        {
-                            childNode.proposedRoleName = propRole?.RoleDesc;
-                        }
+                        childNode.porposedExist = true;
                     }
+                   
+                    if ((childNode.proposedRoleId ?? 0) == 0)
+                        childNode.proposedRoleId = workflow.RoleId;
                     
+                    var propRole = roles.Where(x => x.RoleId == childNode.proposedRoleId).FirstOrDefault();
+                    if (propRole != null)
+                    {
+                        childNode.proposedRoleName = propRole?.RoleDesc;
+                    }
+
                     childNode.RoleId = workflow.RoleId;
                     var role = roles.Where(x => x.RoleId == childNode.RoleId).FirstOrDefault();
                     if (role != null)
@@ -148,14 +166,18 @@ namespace AccOrgChart.Repository.Managers
                     {                      
                         childNode.proposedverbId = workflow.JwProposedVerbTask1;                       
                         childNode.porposedBy = workflow.JwProposedBy;
-
-                        var propVerb = verbs.Where(x => x.VerbId == childNode.proposedverbId).FirstOrDefault();
-                        if (propVerb != null)
-                        {
-                            childNode.proposedverbName = propVerb?.VerbDesc;
-                        }
+                        childNode.porposedExist = true;
                     }
-                                      
+
+                    if ((childNode.proposedverbId ?? 0) == 0)
+                        childNode.proposedverbId = workflow.JwVerb;
+
+                    var propVerb = verbs.Where(x => x.VerbId == childNode.proposedverbId).FirstOrDefault();
+                    if (propVerb != null)
+                    {
+                        childNode.proposedverbName = propVerb?.VerbDesc;
+                    }
+
                     childNode.verbId = workflow.JwVerb;
                     var verb = verbs.Where(x => x.VerbId == childNode.verbId).FirstOrDefault();
                     if (verb != null)
@@ -169,8 +191,9 @@ namespace AccOrgChart.Repository.Managers
                     {
                         childNode.proposedTaskName = workflow.JwProposedTask1;
                         childNode.porposedBy = workflow.JwProposedBy;
+                        childNode.porposedExist = true;
                     }
-
+                  
                     childNode.TaskId = workflow.TaskId;
                     var task = tasks.Where(x => x.TskSeq == childNode.TaskId).FirstOrDefault();
                     if (task != null)
@@ -178,6 +201,8 @@ namespace AccOrgChart.Repository.Managers
                         childNode.TaskName = task?.TskDesc;
                     }
 
+                    if ((childNode.proposedTaskName ?? "") =="")
+                        childNode.proposedTaskName = task?.TskDesc;
 
 
                     childNodes.Add(childNode);
