@@ -7,7 +7,6 @@ using Microsoft.EntityFrameworkCore;
 namespace AccOrgChart.Repository.Models.HR_StatisticsModels
 {
     [Table("tblJobWorkFlow")]
-    [Index("JwJobId", "JwTaskId", Name = "IX_tblJobWorkFlow", IsUnique = true)]
     public partial class TblJobWorkFlow
     {
         [Key]

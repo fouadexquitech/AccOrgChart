@@ -33,11 +33,11 @@ namespace AccOrgChart.Controllers
             }
         }
 
-        public bool AddWorkFlow(int parentId, int TaskId, int RoleId, bool updateTask, string newTaskName, int verbId, string proposedUser)
+        public bool AddWorkFlow(int parentId, int RoleId, int verbId, int TaskId, string newTaskName , string proposedUser, int wfAddMode)
         {
             try
             {
-                return this._workFlowRepository.AddWorkFlow(parentId,  TaskId,  RoleId,  updateTask,  newTaskName,verbId, proposedUser);
+                return this._workFlowRepository.AddWorkFlow(parentId,  RoleId,  verbId,  TaskId,  newTaskName,  proposedUser,  wfAddMode);
             }
             catch (Exception ex)
             {
@@ -45,7 +45,6 @@ namespace AccOrgChart.Controllers
                 return false;
             }
         }
-
 
         public bool AddWorkflowToSubActivity(int SubActivityId, int TaskId, int RoleId, bool updateTask, string newTaskName, int verbId, string proposedUser)
         {

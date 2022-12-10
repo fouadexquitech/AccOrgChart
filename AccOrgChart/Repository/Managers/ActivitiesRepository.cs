@@ -253,13 +253,13 @@ namespace AccOrgChart.Repository.Managers
         }
 
 
-        public bool AddSubActivity(int ActivityId, string SubActivityDesc)
+        public bool AddSubActivity(int ActivityId, string SubActivityDesc,string proposedUser)
         {
             var activity = _StatisticsDbContext.TblActivitySubs.Where(x => x.SacDesc == SubActivityDesc && x.ActId == ActivityId).FirstOrDefault();
 
             if (activity == null)
             {
-                var result = new TblActivitySub { SacDesc = SubActivityDesc, ActId = ActivityId };
+                var result = new TblActivitySub { SacDesc = SubActivityDesc, ActId = ActivityId, ProposedSubActivity = SubActivityDesc,ProposedNew=1,ProposedBy=proposedUser,IsProposed=1};
                 _StatisticsDbContext.Add<TblActivitySub>(result);
                 _StatisticsDbContext.SaveChanges();
                 return true;
@@ -268,10 +268,14 @@ namespace AccOrgChart.Repository.Managers
                 return false;
         }
 
-        public bool UpdateSubActivity(int subActivityId, string subActivityDesc)
+        public bool UpdateSubActivity(int subActivityId, string subActivityDesc, string proposedUser)
         {
             var result = _StatisticsDbContext.TblActivitySubs.Where(x => x.SacSeq == subActivityId).FirstOrDefault();
-            result.SacDesc = subActivityDesc;
+            result.ProposedSubActivity = subActivityDesc;
+            result.ProposedDate = DateTime.Now;
+            result.ProposedBy=proposedUser;
+            result.IsProposed = 1;
+            
 
             if (result != null)
             {

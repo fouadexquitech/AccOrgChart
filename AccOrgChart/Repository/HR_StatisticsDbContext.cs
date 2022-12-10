@@ -90,11 +90,22 @@ namespace AccOrgChart.Repository
 
                 entity.Property(e => e.SacSeq).ValueGeneratedOnAdd();
 
+                entity.Property(e => e.Insertdate).HasDefaultValueSql("(getdate())");
+
+                entity.Property(e => e.IsProposed).HasDefaultValueSql("((0))");
+
                 entity.Property(e => e.ProposedApproved).HasDefaultValueSql("((0))");
 
                 entity.Property(e => e.ProposedNew).HasDefaultValueSql("((0))");
 
                 entity.Property(e => e.SacSort).HasDefaultValueSql("((0))");
+            });
+
+            modelBuilder.Entity<TblActivityTask>(entity =>
+            {
+                entity.Property(e => e.Insertdate).HasDefaultValueSql("(getdate())");
+
+                entity.Property(e => e.IsProposed).HasDefaultValueSql("((0))");
             });
 
             modelBuilder.Entity<TblCode>(entity =>

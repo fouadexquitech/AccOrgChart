@@ -2,6 +2,8 @@
 var subActivityMode = 'add';
 var wfMode = 'add';
 var wfAddMode = 0;
+var user = 'ahijazi';
+
 function buildChart() {
     let actId = 0;
     let subActId = 0;
@@ -323,15 +325,21 @@ function submitAddTaskForm() {
         var newTaskName = $('#txtTaskDesc').val();
         var verbId = $('#ddlVerbs').val();
 
-        url = '/WorkFlow/AddWorkFlow?parentId=' + selectedNodeId + '&taskId=' + taskId + '&roleId=' + roleId + '&updateTask=false&newTaskName=' + newTaskName + '&verbId=' + verbId;
-        /*if (wfMode == 'add') {
-            if (wfAddMode == 1) {
-                url = '/WorkFlow/AddWorkFlow?parentId=' + selectedNodeId + '&taskId=' + taskId + '&roleId=' + roleId + '&updateTask=' + updateTask + '&newTaskName=' + newTaskName + '&verbId=' + verbId;
-            }
-            else if (wfAddMode == 2) {
-                url = '/WorkFlow/AddWorkflowToSubActivity?SubActivityId=' + selectedNodeId + '&taskId=' + taskId + '&roleId=' + roleId + '&updateTask=' + updateTask + '&newTaskName=' + newTaskName + '&verbId=' + verbId;
-            }
-        }*/
+        var updateTask = true;
+
+        url = '/WorkFlow/AddWorkflow?parentId=' + selectedNodeId + '&taskId=' + taskId + '&roleId=' + roleId + '&updateTask=' + updateTask + '&newTaskName=' + newTaskName + '&verbId=' + verbId + '&proposedUser=' + user + '&wfAddMode=' + wfAddMode;
+
+        //url = '/WorkFlow/AddWorkFlow?parentId=' + selectedNodeId + '&taskId=' + taskId + '&roleId=' + roleId + '&updateTask=false&newTaskName=' + newTaskName + '&verbId=' + verbId + '&wfAddMode=' + wfAddMode;
+
+        //if (wfMode == 'add') {
+        //    if (wfAddMode == 1) {
+        //        url = '/WorkFlow/AddWorkFlow?parentId=' + selectedNodeId + '&taskId=' + taskId + '&roleId=' + roleId + '&updateTask=' + updateTask + '&newTaskName=' + newTaskName + '&verbId=' + verbId + '&proposedUser=' + user;
+        //    }
+        //    else if (wfAddMode == 2) {
+        //        url = '/WorkFlow/AddWorkflowToSubActivity?SubActivityId=' + selectedNodeId + '&taskId=' + taskId + '&roleId=' + roleId + '&updateTask=' + updateTask + '&newTaskName=' + newTaskName + '&verbId=' + verbId + '&proposedUser=' +user;
+        //    }
+        //}
+
         $.ajax({
             'url': url,
             'dataType': 'json'
@@ -356,9 +364,9 @@ function submitFormSubActivity()
 {
     if ($("#frmUpdateSubActivity").valid()) {
         var subActivityName = $('#txtSubActivityName').val();
-        var url = '/Activities/UpdateSubActivity?subActivityId=' + selectedNodeId + '&newSubActDesc=' + subActivityName;
+        var url = '/Activities/UpdateSubActivity?subActivityId=' + selectedNodeId + '&newSubActDesc=' + subActivityName + '&proposedUser=' + user;
         if (subActivityMode == 'add') {
-            url = '/Activities/AddSubActivity?ActivityId=' + selectedNodeId + '&SubActivityDesc=' + subActivityName;
+            url = '/Activities/AddSubActivity?ActivityId=' + selectedNodeId + '&SubActivityDesc=' + subActivityName + '&proposedUser=' + user;
         }
         $.ajax({
             'url': url,

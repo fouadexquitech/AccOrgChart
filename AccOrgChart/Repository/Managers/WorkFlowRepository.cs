@@ -305,15 +305,78 @@ namespace AccOrgChart.Repository.Managers
             return result;
         }
 
-        public bool AddWorkFlow(int parentId, int TaskId, int RoleId, bool updateTask, string newTaskName, int verbId,string proposedUser)
+        public bool AddWorkFlow(int parentId, int RoleId, int verbId, int TaskId, string newTaskName, string proposedUser, int wfAddMode)
         {
-            //var newWf = new TblJobWorkFlow { JwTaskId = TaskId, JwJobId = RoleId, JwParentId = parentId,JwVerb=verbId };
+            var t = _dbContext.Database.BeginTransaction();
+            try
+            {
+                var wf = new TblJobWorkFlow();
+                int SubActivityId;
 
-            var newWf = new TblJobWorkFlow {JwProposedJobId= RoleId,JwProposedVerbTask1=verbId,JwProposedTask1 = newTaskName,JwProposedBy= proposedUser, JwProposedAction=1,JwProposedApproved=1,JwProposedDate=DateTime.Now, JwParentId = parentId};
+                if (wfAddMode == 2)  /*Add to SubActivity Node*/
+                {
+                    wf = _dbContext.TblJobWorkFlows.Where(x => x.JwTaskId == TaskId && x.JwJobId == RoleId && x.JwParentSubActivity == parentId).FirstOrDefault();
+                    SubActivityId = parentId;
+                }
+                else
+                {
+                    wf = _dbContext.TblJobWorkFlows.Where(x => x.JwTaskId == TaskId && x.JwJobId == RoleId && x.JwParentId == parentId).FirstOrDefault();
 
-            _dbContext.Add<TblJobWorkFlow>(newWf);
-            _dbContext.SaveChanges();
-            return true;
+                    /*Get Parent Node SubActivity*/
+                    var parentWF = _dbContext.TblJobWorkFlows.Where(x => x.JwId == parentId).FirstOrDefault();
+                    if (parentWF!=null)
+                    {
+                        var tskId = parentWF.JwTaskId;
+                        var task = _dbContext.TblActivityTasks.Where(x => x.TskSeq == tskId).FirstOrDefault();
+                        SubActivityId = (int)task.SubActId;
+                    }
+                    else
+                    {
+                        t.Rollback();
+                        return false;
+                    }         
+                }
+
+                if (wf == null)
+                {
+                    var newTask = new TblActivityTask { TskDesc = newTaskName, SubActId = SubActivityId, IsProposed = 1, ProposedBy = proposedUser };
+                    _dbContext.Add<TblActivityTask>(newTask);
+                    _dbContext.SaveChanges();
+
+                    var newTaskId = _dbContext.TblActivityTasks.Where(x => x.TskDesc == newTaskName && x.SubActId == SubActivityId && x.IsProposed == 1 && x.ProposedBy == proposedUser).FirstOrDefault();
+
+                    var newWf = new TblJobWorkFlow();
+
+                    if (wfAddMode == 2)  /*Add to SubActivity Node*/
+                        newWf = new TblJobWorkFlow { JwParentId = 0, JwParentSubActivity = parentId, JwJobId = RoleId, JwVerb = verbId, JwTaskId = newTaskId.TskSeq, JwProposedJobId = RoleId, JwProposedVerbTask1 = verbId, JwProposedTask1 = newTaskName, JwProposedBy = proposedUser, JwProposedAction = 1, JwProposedApproved = 1, JwProposedDate = DateTime.Now, JwProposedNew = 1 };
+                    else
+                        newWf = new TblJobWorkFlow { JwParentId = parentId, JwParentSubActivity = 0, JwJobId = RoleId, JwVerb = verbId, JwTaskId = newTaskId.TskSeq, JwProposedJobId = RoleId, JwProposedVerbTask1 = verbId, JwProposedTask1 = newTaskName, JwProposedBy = proposedUser, JwProposedAction = 1, JwProposedApproved = 1, JwProposedDate = DateTime.Now, JwProposedNew = 1 };
+
+                    _dbContext.Add<TblJobWorkFlow>(newWf);
+                    _dbContext.SaveChanges();
+
+                    //if (updateTask)
+                    //{
+                    //    var task = _dbContext.TblActivityTasks.Where(x => x.TskSeq == TaskId).FirstOrDefault();
+                    //    task.TskDesc = newTaskName;
+                    //    _dbContext.TblActivityTasks.Update(task);
+                    //    _dbContext.SaveChanges();
+                    //}
+
+                    t.Commit();
+                    return true;
+                }
+                else
+                {
+                    t.Rollback();
+                    return false;
+                }
+            }
+            catch (Exception ex)
+            {
+                t.Rollback();
+                return false;
+            }
         }
 
         public bool AddWorkflowToSubActivity(int SubActivityId, int TaskId, int RoleId, bool updateTask, string newTaskName, int verbId, string proposedUser)
@@ -331,13 +394,13 @@ namespace AccOrgChart.Repository.Managers
                     //    newTaskName = task.TskDesc;
                     //}
 
-                    //var newTask = new TblActivityTask { TskDesc = newTaskName, SubActId = SubActivityId };
-                    //_dbContext.Add<TblActivityTask>(newTask);
-                    //_dbContext.SaveChanges();
+                    var newTask = new TblActivityTask { TskDesc = newTaskName, SubActId = SubActivityId,IsProposed=1,ProposedBy=proposedUser };
+                    _dbContext.Add<TblActivityTask>(newTask);
+                    _dbContext.SaveChanges();
 
-                    //var newTaskId = _dbContext.TblActivityTasks.Where(x => x.TskDesc == newTaskName && x.SubActId == SubActivityId).FirstOrDefault();
-                   
-                    var newWf = new TblJobWorkFlow { JwProposedJobId = RoleId, JwProposedVerbTask1 = verbId, JwProposedTask1 = newTaskName, JwProposedBy = proposedUser, JwProposedAction = 1, JwProposedApproved = 1, JwProposedDate = DateTime.Now, JwParentId = 0, JwParentSubActivity = SubActivityId };
+                    var newTaskId = _dbContext.TblActivityTasks.Where(x => x.TskDesc == newTaskName && x.SubActId == SubActivityId && x.IsProposed == 1 && x.ProposedBy == proposedUser).FirstOrDefault();
+
+                    var newWf = new TblJobWorkFlow { JwJobId = RoleId, JwVerb =verbId,JwTaskId=newTaskId.TskSeq, JwProposedJobId = RoleId, JwProposedVerbTask1 = verbId, JwProposedTask1 = newTaskName, JwProposedBy = proposedUser, JwProposedAction = 1, JwProposedApproved = 1, JwProposedDate = DateTime.Now, JwParentId = 0, JwParentSubActivity = SubActivityId ,JwProposedNew=1};
                     //var newWf = new TblJobWorkFlow { JwTaskId = newTaskId.TskSeq, JwJobId = RoleId,JwParentId=0, JwParentSubActivity = SubActivityId,JwVerb= verbId };
                     //AH0912/
 

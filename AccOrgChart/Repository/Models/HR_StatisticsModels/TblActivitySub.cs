@@ -25,6 +25,8 @@ namespace AccOrgChart.Repository.Models.HR_StatisticsModels
         public string? SacDesc { get; set; }
         [Column("sacSort")]
         public int? SacSort { get; set; }
+        [Column("insertdate", TypeName = "datetime")]
+        public DateTime? Insertdate { get; set; }
         [Column("proposedSubActivity")]
         [StringLength(500)]
         [Unicode(false)]
@@ -39,5 +41,7 @@ namespace AccOrgChart.Repository.Models.HR_StatisticsModels
         public byte? ProposedNew { get; set; }
         [Column("proposedApproved")]
         public byte? ProposedApproved { get; set; }
+        [Column("isProposed")]
+        public byte? IsProposed { get; set; }
     }
 }

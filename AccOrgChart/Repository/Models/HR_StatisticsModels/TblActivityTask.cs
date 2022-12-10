@@ -24,5 +24,13 @@ namespace AccOrgChart.Repository.Models.HR_StatisticsModels
         public string? TskDesc { get; set; }
         [Column("tskSort")]
         public int? TskSort { get; set; }
+        [Column("insertdate", TypeName = "datetime")]
+        public DateTime? Insertdate { get; set; }
+        [Column("isProposed")]
+        public byte? IsProposed { get; set; }
+        [Column("proposedBy")]
+        [StringLength(50)]
+        [Unicode(false)]
+        public string? ProposedBy { get; set; }
     }
 }

@@ -190,11 +190,11 @@ namespace AccOrgChart.Controllers
             }
         }
 
-        public bool AddSubActivity(int ActivityId,string SubActivityDesc)
+        public bool AddSubActivity(int ActivityId,string SubActivityDesc, string proposedUser)
         {
             try
             {
-                return this._activitiesRepository.AddSubActivity(ActivityId, SubActivityDesc);
+                return this._activitiesRepository.AddSubActivity(ActivityId, SubActivityDesc,  proposedUser);
             }
             catch (Exception ex)
             {
@@ -203,11 +203,11 @@ namespace AccOrgChart.Controllers
             }
         }
 
-        public bool UpdateSubActivity(int subActivityId, string newSubActDesc)
+        public bool UpdateSubActivity(int subActivityId, string newSubActDesc, string proposedUser)
         {
             try
             {
-                return this._activitiesRepository.UpdateSubActivity(subActivityId, newSubActDesc);
+                return this._activitiesRepository.UpdateSubActivity(subActivityId, newSubActDesc,proposedUser);
             }
             catch (Exception ex)
             {
