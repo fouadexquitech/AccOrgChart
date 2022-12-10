@@ -161,18 +161,18 @@ namespace AccOrgChart.Controllers
             }
         }
 
-        public bool UpdateActivitySub(ActivitySub a)
-        {
-            try
-            {
-                return this._activitiesRepository.UpdateActivitySub(a);
-            }
-            catch (Exception ex)
-            {
-                _ilogger.LogError(ex.Message);
-                return false;
-            }
-        }
+        //public bool UpdateActivitySub(ActivitySub a)
+        //{
+        //    try
+        //    {
+        //        return this._activitiesRepository.UpdateActivitySub(a);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        _ilogger.LogError(ex.Message);
+        //        return false;
+        //    }
+        //}
 
         public result DeleteSubActivity(int subActId)
         {

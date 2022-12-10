@@ -186,23 +186,23 @@ namespace AccOrgChart.Repository.Managers
             return result;
         }
 
-        public bool UpdateActivitySub(ActivitySub act)
-        {
-            var result = _StatisticsDbContext.TblActivitySubs.Where(x => x.SacSeq == act.sacSeq).FirstOrDefault();
-            result.SacDesc = act.sacDesc;
-            result.SacSort = act.sacSort;
-            result.SacCode = act.sacCode;
-            result.ActId = act.actId;
+        //public bool UpdateActivitySub(ActivitySub act)
+        //{
+        //    var result = _StatisticsDbContext.TblActivitySubs.Where(x => x.SacSeq == act.sacSeq).FirstOrDefault();
+        //    result.SacDesc = act.sacDesc;
+        //    result.SacSort = act.sacSort;
+        //    result.SacCode = act.sacCode;
+        //    result.ActId = act.actId;
 
-            if (result != null)
-            {
-                _StatisticsDbContext.TblActivitySubs.Update(result);
-                _StatisticsDbContext.SaveChanges();
-                return true;
-            }
-            else
-                return false;
-        }
+        //    if (result != null)
+        //    {
+        //        _StatisticsDbContext.TblActivitySubs.Update(result);
+        //        _StatisticsDbContext.SaveChanges();
+        //        return true;
+        //    }
+        //    else
+        //        return false;
+        //}
 
         public result DeleteSubActivity(int subActId)
         {
@@ -259,7 +259,7 @@ namespace AccOrgChart.Repository.Managers
 
             if (activity == null)
             {
-                var result = new TblActivitySub { SacDesc = SubActivityDesc, ActId = ActivityId, ProposedSubActivity = SubActivityDesc,ProposedNew=1,ProposedBy=proposedUser,IsProposed=1};
+                var result = new TblActivitySub { SacDesc = SubActivityDesc, ActId = ActivityId, ProposedSubActivity = SubActivityDesc,ProposedNew=1,ProposedBy=proposedUser,IsProposed=1, ProposedApproved = 1 };
                 _StatisticsDbContext.Add<TblActivitySub>(result);
                 _StatisticsDbContext.SaveChanges();
                 return true;
@@ -275,7 +275,8 @@ namespace AccOrgChart.Repository.Managers
             result.ProposedDate = DateTime.Now;
             result.ProposedBy=proposedUser;
             result.IsProposed = 1;
-            
+            result.ProposedApproved = 1;
+            result.ProposedNew = 0;
 
             if (result != null)
             {

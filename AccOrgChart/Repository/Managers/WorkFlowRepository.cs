@@ -16,6 +16,8 @@ namespace AccOrgChart.Repository.Managers
             _dbContext = dbContext;
         }
 
+
+        /*Get All Nodes for selected Sub Activity*/
         public Node? GetChartOrgSubActivity(int subActId)
         {
             try
@@ -237,11 +239,12 @@ namespace AccOrgChart.Repository.Managers
                 {
                     mainNode = new Node();
                     mainNode.Id = root.ActSeq;
+                    mainNode.Type = 1;
                     mainNode.RoleId = 0;
                     mainNode.RoleName = "Activity";
                     mainNode.TaskId = 0;
                     mainNode.TaskName = root.ActDesc;
-                    mainNode.Type = 1;
+                    
 
                     GetSubActChildrenNodes(mainNode, roles, verbs, tasks, subActs);
 
@@ -269,9 +272,19 @@ namespace AccOrgChart.Repository.Managers
                     childNode.Id = subAct.SacSeq;
                     childNode.RoleId = 0;
                     childNode.RoleName = "Sub-Activity";
-                    childNode.TaskId = 0;
-                    childNode.TaskName = subAct.SacDesc;
+                    childNode.TaskId = 0;              
                     childNode.Type = 2;
+
+
+                    //Proposed Sub-Activity
+                    if ((subAct.ProposedSubActivity ?? "") != "" & ((subAct.ProposedApproved ?? 0) != 2))
+                    {
+                        childNode.proposedTaskName = subAct.ProposedSubActivity;
+                        childNode.porposedBy = subAct.ProposedBy;
+                        childNode.porposedExist = true;
+                    }
+
+                    childNode.TaskName = subAct.SacDesc;
 
                     childNodes.Add(childNode);
                     node.Children = childNodes;
@@ -537,7 +550,7 @@ namespace AccOrgChart.Repository.Managers
                     }
 
                     if (isProposed) { 
-                        result.JwProposedNew = 1;
+                        result.JwProposedNew = 0;
                         result.JwProposedApproved = 1;  //in case of approval value will be 2
                         result.JwProposedBy = proposedUser;
                         result.JwProposedDate = DateTime.Now;
