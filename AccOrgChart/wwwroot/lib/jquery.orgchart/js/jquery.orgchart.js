@@ -1313,7 +1313,7 @@
 
         /*Show icon in case proposal exists*/
         if (data.porposedExist) {
-            $nodeDiv.children('.title').append('&nbsp;<i class="fa fa-triangle-exclamation text-danger"></i>');
+            $nodeDiv.children('.title').append('<br><i class="fa fa-triangle-exclamation text-danger"></i> proposed by ' + data.porposedBy);
         }
 
       $nodeDiv.on('mouseenter mouseleave', this.nodeEnterLeaveHandler.bind(this));
