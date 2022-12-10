@@ -92,7 +92,7 @@ function buildChart() {
 
 
 function resetForm() {
-    $('#frmAddTask').trigger("reset");
+    $('#frmAddEditTask').trigger("reset");
     $('#chkTask').attr("checked", false);
     //$('#txtTaskDesc').attr("readonly", true);
     $('#ddlVerbs').attr("readonly", true);
@@ -125,7 +125,7 @@ $(document).ready(function () {
         };
     }, "<span class='text-danger'>Required Field</span>");
 
-    $("#frmAddTask").validate({
+    $("#frmAddEditTask").validate({
         rules: {
             ddlRoles: {
                 requiredSelect: true
@@ -166,6 +166,7 @@ $(document).ready(function () {
             let taskId = $(this).attr('data-task-id');
             let taskName = $(this).attr('data-task-name');
             let verbId = $(this).attr('data-verb-id');
+            let verbName = $(this).attr('data-verb-name');
 
             resetForm();
             selectedNodeId = id;
@@ -173,22 +174,39 @@ $(document).ready(function () {
             if (type == 3) //Task
             {
                 if (key == 'edit') {
+                    $('#currentTaskValues').show();
+                    var validator = $("#frmAddEditTask").validate();
+                    validator.resetForm();
                     wfMode = 'edit';
                     $('#spanWfTitle').text('Edit');
-                    $('#spanModalContentTitle').text(roleName);
-                    $('#ddlRoles').val(roleId);
-                    $('#ddlVerbs').val(verbId);
-                    getTasks(0, 0, taskId);
+
+                    $('#lblCurrentRoleName').text(roleName);
+                    $('#lblCurrentTaskDesc').text(taskName);
+                    $('#lblCurrentVerbName').text(verbName);
+                    $('#lblRole').text("Proposed Role");
+                    $('#lblVerb').text("Proposed Verb");
+                    $('#lblTask').text("Proposed Task");
+                    /*getTasks(0, 0, taskId);
                     getRoles(roleId);
                     getVerbs(verbId);
-                    $('#txtTaskDesc').val(taskName);
+                    $('#txtTaskDesc').val(taskName);*/
+                    getTasks(0, 0, 0);
+                    getRoles(0);
+                    getVerbs(0);
+
                     $('#modalContent').modal('show');
                 }
                 else if (key == 'add') {
+                    $('#currentTaskValues').hide();
+                    var validator = $("#frmAddEditTask").validate();
+                    validator.resetForm();
                     wfMode = 'add';
                     wfAddMode = 1;
                     $('#spanWfTitle').text('Add');
-                    $('#spanModalContentTitle').text(roleName);
+                   
+                    $('#lblRole').text("Role");
+                    $('#lblVerb').text("Verb");
+                    $('#lblTask').text("Task");
                     getTasks(0, 0, 0);
                     getRoles(0);
                     getVerbs(0);
@@ -208,16 +226,20 @@ $(document).ready(function () {
             }
             else if (type == 2) {
                 if (key == 'edit') {
+                    
                     subActivityMode = 'edit';
                     $('#spanSubActivityTitle').text('Edit Sub-Activity');
                     $('#txtSubActivityName').val(taskName);
                     $('#modalContentSubActivity').modal('show');
                 }
                 else if (key == 'add') {
+                    $('#currentTaskValues').hide();
                     wfMode = 'add';
                     wfAddMode = 2;
                     $('#spanWfTitle').text('Add');
-                    $('#spanModalContentTitle').text(roleName);
+                    $('#lblRole').text("Role");
+                    $('#lblVerb').text("Verb");
+                    $('#lblTask').text("Task");
                     getTasks(0, 0, 0);
                     getRoles(0);
                     getVerbs(0);
@@ -317,8 +339,8 @@ function deleteSubActivity(id)
         });
 }
 
-function submitAddTaskForm() {
-    if ($("#frmAddTask").valid()) {
+function submitTaskForm() {
+    if ($("#frmAddEditTask").valid()) {
         var taskId = $('#ddlTasks').val();
         roleId = $('#ddlRoles').val();
         //var updateTask = $('#chkTask').prop('checked');
@@ -327,18 +349,20 @@ function submitAddTaskForm() {
 
         var updateTask = true;
 
-        url = '/WorkFlow/AddWorkflow?parentId=' + selectedNodeId + '&taskId=' + taskId + '&roleId=' + roleId + '&updateTask=' + updateTask + '&newTaskName=' + newTaskName + '&verbId=' + verbId + '&proposedUser=' + user + '&wfAddMode=' + wfAddMode;
+        let url = '/WorkFlow/AddWorkflow?parentId=' + selectedNodeId + '&taskId=' + taskId + '&roleId=' + roleId + '&updateTask=' + updateTask + '&newTaskName=' + newTaskName + '&verbId=' + verbId + '&proposedUser=' + user + '&wfAddMode=' + wfAddMode;
 
-        //url = '/WorkFlow/AddWorkFlow?parentId=' + selectedNodeId + '&taskId=' + taskId + '&roleId=' + roleId + '&updateTask=false&newTaskName=' + newTaskName + '&verbId=' + verbId + '&wfAddMode=' + wfAddMode;
-
-        //if (wfMode == 'add') {
-        //    if (wfAddMode == 1) {
-        //        url = '/WorkFlow/AddWorkFlow?parentId=' + selectedNodeId + '&taskId=' + taskId + '&roleId=' + roleId + '&updateTask=' + updateTask + '&newTaskName=' + newTaskName + '&verbId=' + verbId + '&proposedUser=' + user;
-        //    }
-        //    else if (wfAddMode == 2) {
-        //        url = '/WorkFlow/AddWorkflowToSubActivity?SubActivityId=' + selectedNodeId + '&taskId=' + taskId + '&roleId=' + roleId + '&updateTask=' + updateTask + '&newTaskName=' + newTaskName + '&verbId=' + verbId + '&proposedUser=' +user;
-        //    }
-        //}
+        
+        if (wfMode == 'add') {
+            if (wfAddMode == 1) {
+                url = '/WorkFlow/AddWorkflow?parentId=' + selectedNodeId + '&taskId=' + taskId + '&roleId=' + roleId + '&updateTask=' + updateTask + '&newTaskName=' + newTaskName + '&verbId=' + verbId + '&proposedUser=' + user + '&wfAddMode=' + wfAddMode;
+            }
+            else if (wfAddMode == 2) {
+                url = '/WorkFlow/AddWorkflowToSubActivity?SubActivityId=' + selectedNodeId + '&taskId=' + taskId + '&roleId=' + roleId + '&updateTask=' + updateTask + '&newTaskName=' + newTaskName + '&verbId=' + verbId + '&proposedUser=' + user;
+            }
+        }
+        else if (wfMode == 'edit') {
+            url = '/WorkFlow/UpdateWorkFlow?wfId=' + selectedNodeId + '&updateTask=false&proposedTaskName=' + newTaskName + '&proposedRoleId=' + roleId + '&proposedVerbId=' + verbId + '&proposedUser=' + user + '&wfAddMode=' + wfAddMode;
+        }
 
         $.ajax({
             'url': url,

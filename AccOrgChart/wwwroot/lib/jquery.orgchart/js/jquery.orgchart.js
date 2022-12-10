@@ -1272,6 +1272,7 @@
             (data.parentId ? ' data-parent="' + data.parentId + '"' : '') +
             (data.roleId ? ' data-role-id="' + data.roleId + '"' : '') +
             (data.verbId ? ' data-verb-id="' + data.verbId + '"' : '') +
+            (data.verbName ? ' data-verb-name="' + data.verbName + '"' : '') +
             (data.roleName ? ' data-role-name="' + data.roleName + '"' : '') +
             (data.taskId ? ' data-task-id="' + data.taskId + '"' : '') +
             (data.taskName ? ' data-task-name="' + data.taskName + '"' : '') +
@@ -1308,7 +1309,12 @@
           $nodeDiv.append('<i class="edge verticalEdge bottomEdge oci"></i>')
             .children('.title').prepend('<i class="oci '+ opts.parentNodeSymbol + ' symbol"></i>');
         }
-      }
+        }
+
+        /*Show icon in case proposal exists*/
+        if (data.porposedExist) {
+            $nodeDiv.children('.title').append('&nbsp;<i class="fa fa-triangle-exclamation text-danger"></i>');
+        }
 
       $nodeDiv.on('mouseenter mouseleave', this.nodeEnterLeaveHandler.bind(this));
       $nodeDiv.on('click', this.nodeClickHandler.bind(this));

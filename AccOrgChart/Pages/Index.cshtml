@@ -71,12 +71,28 @@
                 <h5 class="modal-title"><span id="spanWfTitle"></span></h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-
-            <form id="frmAddTask">
+            <div class="modal-body" id="currentTaskValues">
+                <div class="row">
+                        <div class="col-4 p-3">
+                            <h5><strong>Role</strong></h5>
+                            <label id="lblCurrentRoleName"></label>
+                        </div>
+                        <div class="col-4 p-3">
+                            <h5><strong>Task</strong></h5>
+                            <label id="lblCurrentTaskDesc"></label>
+                        </div>
+                        <div class="col-4 p-3">
+                            <h5><strong>Verb</strong></h5>
+                            <label id="lblCurrentVerbName"></label>
+                        </div>
+                </div>
+            </div>
+           
+            <form id="frmAddEditTask">
                 <div class="modal-body">
                     <div class="row">
                         <div class="form-group p-3">
-                            <label>Role</label>
+                            <label id="lblRole"></label>
                             <select id="ddlRoles" name="ddlRoles" class="form-select">
                             </select>
                         </div>
@@ -88,13 +104,13 @@
                         </div>
 
                         <div class="form-group p-3">
-                            <label>Verb</label>
+                            <label id="lblVerb"></label>
                             <select id="ddlVerbs" name="ddlVerbs" class="form-select"></select>
                         </div>
 
                         <div class="form-group p-3">
-                            <label>Task Description</label>
-                            <input id="txtTaskDesc" name="txtTaskDesc" class="form-control" />
+                            <label id="lblTask"></label>
+                            <textarea id="txtTaskDesc" name="txtTaskDesc" class="form-control" rows="3"></textarea>
                         </div>
 
                     </div>
@@ -102,7 +118,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <a class="btn btn-primary" onclick="submitAddTaskForm()">Save changes</a>
+                    <a class="btn btn-primary" onclick="submitTaskForm()">Save changes</a>
                 </div>
             </form>
 
