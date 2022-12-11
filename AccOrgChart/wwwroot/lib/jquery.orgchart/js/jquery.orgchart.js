@@ -1288,7 +1288,7 @@
         $nodeDiv.append(opts.nodeTemplate(data));
       } else {
         $nodeDiv.append('<div class="title">' + data[opts.nodeTitle] + '</div>')
-            .append(typeof opts.nodeContent !== 'undefined' ? '<div class="content"><strong>Task:</strong> ' + (data[opts.nodeContent] || '') + '</div>' : '');
+            .append(typeof opts.nodeContent !== 'undefined' ? '<div class="content">' + (data.nodeVerbName !== null ? '<strong>Verb: </strong>' + data.nodeVerbName + '<br>' : '') + (data.type === 3 ? '<strong>Task:</strong> ': '') + (data[opts.nodeContent] || '') + '</div>' : '');
       }
       //
       var nodeData = $.extend({}, data);
@@ -1325,10 +1325,8 @@
       $nodeDiv.on('click', '.topEdge', this.topEdgeClickHandler.bind(this));
       $nodeDiv.on('click', '.bottomEdge', this.bottomEdgeClickHandler.bind(this));
       $nodeDiv.on('click', '.leftEdge, .rightEdge', this.hEdgeClickHandler.bind(this));
-        $nodeDiv.on('click', '.toggleBtn', this.toggleVNodes.bind(this));
+      $nodeDiv.on('click', '.toggleBtn', this.toggleVNodes.bind(this));
 
-
-        $nodeDiv.children('.content').append(data.nodeVerbName !== null ? '<br><strong>Verb:</strong> ' + data.nodeVerbName : '');
 
       if (opts.draggable) {
         this.bindDragDrop($nodeDiv);
