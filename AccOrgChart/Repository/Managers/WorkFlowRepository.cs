@@ -94,7 +94,7 @@ namespace AccOrgChart.Repository.Managers
                             mainNode.NodeVerbName = verb?.VerbDesc;
                         }
                     }
-       
+
                     //Proposed Task
                     if ((root.JwProposedTask1 ?? "") != "" & ((root.JwProposedApproved ?? 0) != 2))
                     {
@@ -102,16 +102,16 @@ namespace AccOrgChart.Repository.Managers
                         mainNode.porposedBy = root.JwProposedBy;
                         mainNode.porposedExist = true;
                     }
-
-                    mainNode.TaskId = root.TaskId;
-                    var task = tasks.Where(x => x.TskSeq == mainNode.TaskId).FirstOrDefault();
-                    if (task != null)
+                    else
                     {
-                        mainNode.TaskName = task?.TskDesc;
+                        mainNode.TaskId = root.TaskId;
+                        var task = tasks.Where(x => x.TskSeq == mainNode.TaskId).FirstOrDefault();
+                        if (task != null)
+                        {
+                            mainNode.TaskName = task?.TskDesc;
+                            mainNode.NodeTaskName = task?.TskDesc;
+                        }
                     }
-
-                    if ((mainNode.proposedTaskName ?? "") == "")
-                        mainNode.proposedTaskName = task?.TskDesc;
 
                     GetChildrenNodes(mainNode, roles, verbs, tasks, workFlows, 1);
                 }
