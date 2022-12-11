@@ -349,19 +349,19 @@ function submitTaskForm() {
 
         var updateTask = true;
 
-        let url = '/WorkFlow/AddWorkflow?parentId=' + selectedNodeId + '&taskId=' + taskId + '&roleId=' + roleId + '&updateTask=' + updateTask + '&newTaskName=' + newTaskName + '&verbId=' + verbId + '&proposedUser=' + user + '&wfAddMode=' + wfAddMode;
-
+        let url = '';
         
         if (wfMode == 'add') {
-            if (wfAddMode == 1) {
-                url = '/WorkFlow/AddWorkflow?parentId=' + selectedNodeId + '&taskId=' + taskId + '&roleId=' + roleId + '&updateTask=' + updateTask + '&newTaskName=' + newTaskName + '&verbId=' + verbId + '&proposedUser=' + user + '&wfAddMode=' + wfAddMode;
-            }
-            else if (wfAddMode == 2) {
-                url = '/WorkFlow/AddWorkflowToSubActivity?SubActivityId=' + selectedNodeId + '&taskId=' + taskId + '&roleId=' + roleId + '&updateTask=' + updateTask + '&newTaskName=' + newTaskName + '&verbId=' + verbId + '&proposedUser=' + user;
-            }
+             url = '/WorkFlow/AddWorkflow?parentId=' + selectedNodeId + '&taskId=' + taskId + '&roleId=' + roleId + '&updateTask=' + updateTask + '&newTaskName=' + newTaskName + '&verbId=' + verbId + '&proposedUser=' + user + '&wfAddMode=' + wfAddMode;
+            //if (wfAddMode == 1) {
+            //    url = '/WorkFlow/AddWorkflow?parentId=' + selectedNodeId + '&taskId=' + taskId + '&roleId=' + roleId + '&updateTask=' + updateTask + '&newTaskName=' + newTaskName + '&verbId=' + verbId + '&proposedUser=' + user + '&wfAddMode=' + wfAddMode;
+            //}
+            //else if (wfAddMode == 2) {
+            //    url = '/WorkFlow/AddWorkflowToSubActivity?SubActivityId=' + selectedNodeId + '&taskId=' + taskId + '&roleId=' + roleId + '&updateTask=' + updateTask + '&newTaskName=' + newTaskName + '&verbId=' + verbId + '&proposedUser=' + user;
+            //}
         }
         else if (wfMode == 'edit') {
-            url = '/WorkFlow/UpdateWorkFlow?wfId=' + selectedNodeId + '&updateTask=false&proposedTaskName=' + newTaskName + '&proposedRoleId=' + roleId + '&proposedVerbId=' + verbId + '&proposedUser=' + user + '&wfAddMode=' + wfAddMode;
+             url = '/WorkFlow/UpdateWorkFlow?wfId=' + selectedNodeId + '&updateTask=false&proposedTaskName=' + newTaskName + '&proposedRoleId=' + roleId + '&proposedVerbId=' + verbId + '&proposedUser=' + user + '&wfAddMode=' + wfAddMode;
         }
 
         $.ajax({

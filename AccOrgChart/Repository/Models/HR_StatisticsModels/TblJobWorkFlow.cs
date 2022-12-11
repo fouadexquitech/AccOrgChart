@@ -100,5 +100,7 @@ namespace AccOrgChart.Repository.Models.HR_StatisticsModels
         public DateTime? JwProposedDate { get; set; }
         [Column("deleted")]
         public byte? Deleted { get; set; }
+        [Column("jwProposedTaskId")]
+        public int? JwProposedTaskId { get; set; }
     }
 }

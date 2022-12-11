@@ -106,6 +106,8 @@ namespace AccOrgChart.Repository
                 entity.Property(e => e.Insertdate).HasDefaultValueSql("(getdate())");
 
                 entity.Property(e => e.IsProposed).HasDefaultValueSql("((0))");
+
+                entity.Property(e => e.WorkFlowId).HasDefaultValueSql("((0))");
             });
 
             modelBuilder.Entity<TblCode>(entity =>
@@ -185,6 +187,8 @@ namespace AccOrgChart.Repository
                 entity.Property(e => e.JwProposedJobId).HasDefaultValueSql("((0))");
 
                 entity.Property(e => e.JwProposedNew).HasDefaultValueSql("((0))");
+
+                entity.Property(e => e.JwProposedTaskId).HasDefaultValueSql("((0))");
 
                 entity.Property(e => e.JwRaci).HasDefaultValueSql("((0))");
 

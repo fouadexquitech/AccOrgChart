@@ -32,5 +32,7 @@ namespace AccOrgChart.Repository.Models.HR_StatisticsModels
         [StringLength(50)]
         [Unicode(false)]
         public string? ProposedBy { get; set; }
+        [Column("workFlowId")]
+        public int? WorkFlowId { get; set; }
     }
 }

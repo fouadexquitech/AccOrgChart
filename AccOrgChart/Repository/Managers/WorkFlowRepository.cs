@@ -47,50 +47,54 @@ namespace AccOrgChart.Repository.Managers
                         mainNode.proposedRoleId = root.JwProposedJobId;
                         mainNode.porposedBy = root.JwProposedBy;
                         mainNode.porposedExist = true;
-                    }
 
-                    if ((mainNode.proposedRoleId ?? 0) == 0)
+                        var propRole = roles.Where(x => x.RoleId == mainNode.proposedRoleId).FirstOrDefault();
+                        if (propRole != null)
+                        {
+                            mainNode.proposedRoleName = propRole?.RoleDesc;
+                            mainNode.NodeRoleName = propRole?.RoleDesc;
+                        }
+                    }
+                    else
+                    {
+                        mainNode.RoleId = root.RoleId;
                         mainNode.proposedRoleId = root.RoleId;
 
-                    var propRole = roles.Where(x => x.RoleId == mainNode.proposedRoleId).FirstOrDefault();
-                    if (propRole != null)
-                    {
-                        mainNode.proposedRoleName = propRole?.RoleDesc;
+                        var role = roles.Where(x => x.RoleId == mainNode.RoleId).FirstOrDefault();
+                        if (role != null)
+                        {
+                            mainNode.RoleName = role?.RoleDesc;
+                            mainNode.NodeRoleName = role?.RoleDesc;
+                        }
                     }
-
-                    mainNode.RoleId = root.RoleId;
-                    var role = roles.Where(x => x.RoleId == mainNode.RoleId).FirstOrDefault();
-                    if (role != null)
-                    {
-                        mainNode.RoleName = role?.RoleDesc;
-                    }
-
 
                     //Proposed Verb
                     if ((root.JwProposedVerbTask1 ?? 0) > 0 & ((root.JwProposedApproved ?? 0) != 2))
                     {
-                        mainNode.proposedverbId = root.JwProposedVerbTask1;
+                        mainNode.proposedVerbId = root.JwProposedVerbTask1;
                         mainNode.porposedBy = root.JwProposedBy;
                         mainNode.porposedExist = true;
+
+                        var propVerb = verbs.Where(x => x.VerbId == mainNode.proposedVerbId).FirstOrDefault();
+                        if (propVerb != null)
+                        {
+                            mainNode.proposedVerbName = propVerb?.VerbDesc;
+                            mainNode.NodeVerbName = propVerb?.VerbDesc;
+                        }
                     }
-
-                    if ((mainNode.proposedverbId ?? 0) == 0)
-                        mainNode.proposedverbId = root.JwVerb;
-
-                    var propVerb = verbs.Where(x => x.VerbId == mainNode.proposedverbId).FirstOrDefault();
-                    if (propVerb != null)
+                    else
                     {
-                        mainNode.proposedverbName = propVerb?.VerbDesc;
+                        mainNode.verbId = root.JwVerb;
+                        mainNode.proposedVerbId = root.JwVerb;
+
+                        var verb = verbs.Where(x => x.VerbId == mainNode.verbId).FirstOrDefault();
+                        if (verb != null)
+                        {
+                            mainNode.verbName = verb?.VerbDesc;
+                            mainNode.NodeVerbName = verb?.VerbDesc;
+                        }
                     }
-
-                    mainNode.verbId = root.JwVerb;
-                    var verb = verbs.Where(x => x.VerbId == mainNode.verbId).FirstOrDefault();
-                    if (verb != null)
-                    {
-                        mainNode.verbName = verb?.VerbDesc;
-                    }
-
-
+       
                     //Proposed Task
                     if ((root.JwProposedTask1 ?? "") != "" & ((root.JwProposedApproved ?? 0) != 2))
                     {
@@ -144,47 +148,52 @@ namespace AccOrgChart.Repository.Managers
                         childNode.proposedRoleId = workflow.JwProposedJobId;
                         childNode.porposedBy = workflow.JwProposedBy;
                         childNode.porposedExist = true;
-                    }
-                   
-                    if ((childNode.proposedRoleId ?? 0) == 0)
-                        childNode.proposedRoleId = workflow.RoleId;
-                    
-                    var propRole = roles.Where(x => x.RoleId == childNode.proposedRoleId).FirstOrDefault();
-                    if (propRole != null)
-                    {
-                        childNode.proposedRoleName = propRole?.RoleDesc;
-                    }
 
-                    childNode.RoleId = workflow.RoleId;
-                    var role = roles.Where(x => x.RoleId == childNode.RoleId).FirstOrDefault();
-                    if (role != null)
-                    {
-                        childNode.RoleName = role?.RoleDesc;
+                        var propRole = roles.Where(x => x.RoleId == childNode.proposedRoleId).FirstOrDefault();
+                        if (propRole != null)
+                        {
+                            childNode.proposedRoleName = propRole?.RoleDesc;
+                            childNode.NodeRoleName = propRole?.RoleDesc;
+                        }
                     }
+                   else
+                    { 
+                      childNode.RoleId = workflow.RoleId;
+                      childNode.proposedRoleId = workflow.RoleId;
 
-
+                        var role = roles.Where(x => x.RoleId == childNode.RoleId).FirstOrDefault();
+                        if (role != null)
+                        {
+                            childNode.RoleName = role?.RoleDesc;
+                            childNode.NodeRoleName = role?.RoleDesc;
+                        }
+                    }
+            
                     //Proposed Verb
                     if ((workflow.JwProposedVerbTask1 ?? 0) > 0 & ((workflow.JwProposedApproved ?? 0) != 2))
                     {                      
-                        childNode.proposedverbId = workflow.JwProposedVerbTask1;                       
+                        childNode.proposedVerbId = workflow.JwProposedVerbTask1;                       
                         childNode.porposedBy = workflow.JwProposedBy;
                         childNode.porposedExist = true;
+
+                        var propVerb = verbs.Where(x => x.VerbId == childNode.proposedVerbId).FirstOrDefault();
+                        if (propVerb != null)
+                        {
+                            childNode.proposedVerbName = propVerb?.VerbDesc;
+                            childNode.NodeVerbName = propVerb?.VerbDesc;
+                        }
                     }
-
-                    if ((childNode.proposedverbId ?? 0) == 0)
-                        childNode.proposedverbId = workflow.JwVerb;
-
-                    var propVerb = verbs.Where(x => x.VerbId == childNode.proposedverbId).FirstOrDefault();
-                    if (propVerb != null)
+                    else
                     {
-                        childNode.proposedverbName = propVerb?.VerbDesc;
-                    }
+                        childNode.verbId = workflow.JwVerb;
+                        childNode.proposedVerbId = workflow.JwVerb;
 
-                    childNode.verbId = workflow.JwVerb;
-                    var verb = verbs.Where(x => x.VerbId == childNode.verbId).FirstOrDefault();
-                    if (verb != null)
-                    {
-                        childNode.verbName = verb?.VerbDesc;
+                        var verb = verbs.Where(x => x.VerbId == childNode.verbId).FirstOrDefault();
+                        if (verb != null)
+                        {
+                            childNode.verbName = verb?.VerbDesc;
+                            childNode.NodeVerbName = verb?.VerbDesc;
+                        }
                     }
 
 
@@ -194,17 +203,18 @@ namespace AccOrgChart.Repository.Managers
                         childNode.proposedTaskName = workflow.JwProposedTask1;
                         childNode.porposedBy = workflow.JwProposedBy;
                         childNode.porposedExist = true;
+                        childNode.NodeTaskName = workflow.JwProposedTask1;
                     }
-                  
-                    childNode.TaskId = workflow.TaskId;
-                    var task = tasks.Where(x => x.TskSeq == childNode.TaskId).FirstOrDefault();
-                    if (task != null)
+                    else
                     {
-                        childNode.TaskName = task?.TskDesc;
+                        childNode.TaskId = workflow.TaskId;
+                        var task = tasks.Where(x => x.TskSeq == childNode.TaskId).FirstOrDefault();
+                        if (task != null)
+                        {
+                            childNode.TaskName = task?.TskDesc;
+                            childNode.NodeTaskName = task?.TskDesc;
+                        }
                     }
-
-                    if ((childNode.proposedTaskName ?? "") =="")
-                        childNode.proposedTaskName = task?.TskDesc;
 
 
                     childNodes.Add(childNode);
@@ -353,19 +363,26 @@ namespace AccOrgChart.Repository.Managers
                 if (wf == null)
                 {
                     var newTask = new TblActivityTask { TskDesc = newTaskName, SubActId = SubActivityId, IsProposed = 1, ProposedBy = proposedUser };
-                    _dbContext.Add<TblActivityTask>(newTask);
+                    _dbContext.Add<TblActivityTask>(newTask);                 
                     _dbContext.SaveChanges();
+                    int createdTaskId = newTask.TskSeq;
 
-                    var newTaskId = _dbContext.TblActivityTasks.Where(x => x.TskDesc == newTaskName && x.SubActId == SubActivityId && x.IsProposed == 1 && x.ProposedBy == proposedUser).FirstOrDefault();
+                    //var createdTaskId = _dbContext.TblActivityTasks.Where(x => x.TskDesc == newTaskName && x.SubActId == SubActivityId && x.IsProposed == 1 && x.ProposedBy == proposedUser).FirstOrDefault();
 
                     var newWf = new TblJobWorkFlow();
 
                     if (wfAddMode == 2)  /*Add to SubActivity Node*/
-                        newWf = new TblJobWorkFlow { JwParentId = 0, JwParentSubActivity = parentId, JwJobId = RoleId, JwVerb = verbId, JwTaskId = newTaskId.TskSeq, JwProposedJobId = RoleId, JwProposedVerbTask1 = verbId, JwProposedTask1 = newTaskName, JwProposedBy = proposedUser, JwProposedAction = 1, JwProposedApproved = 1, JwProposedDate = DateTime.Now, JwProposedNew = 1 };
+                        newWf = new TblJobWorkFlow { JwParentId = 0, JwParentSubActivity = parentId, JwJobId = RoleId, JwVerb = verbId, JwTaskId = createdTaskId, JwProposedJobId = RoleId, JwProposedVerbTask1 = verbId, JwProposedTask1 = newTaskName,JwProposedTaskId=createdTaskId, JwProposedBy = proposedUser, JwProposedAction = 1, JwProposedApproved = 1, JwProposedDate = DateTime.Now, JwProposedNew = 1 };
                     else
-                        newWf = new TblJobWorkFlow { JwParentId = parentId, JwParentSubActivity = 0, JwJobId = RoleId, JwVerb = verbId, JwTaskId = newTaskId.TskSeq, JwProposedJobId = RoleId, JwProposedVerbTask1 = verbId, JwProposedTask1 = newTaskName, JwProposedBy = proposedUser, JwProposedAction = 1, JwProposedApproved = 1, JwProposedDate = DateTime.Now, JwProposedNew = 1 };
+                        newWf = new TblJobWorkFlow { JwParentId = parentId, JwParentSubActivity = 0, JwJobId = RoleId, JwVerb = verbId, JwTaskId = createdTaskId, JwProposedJobId = RoleId, JwProposedVerbTask1 = verbId, JwProposedTask1 = newTaskName, JwProposedTaskId = createdTaskId, JwProposedBy = proposedUser, JwProposedAction = 1, JwProposedApproved = 1, JwProposedDate = DateTime.Now, JwProposedNew = 1 };
 
                     _dbContext.Add<TblJobWorkFlow>(newWf);
+                    _dbContext.SaveChanges();
+
+                    int createdWfId = newWf.JwId;
+
+                    newTask.WorkFlowId = createdWfId;
+                    _dbContext.TblActivityTasks.Update(newTask);
                     _dbContext.SaveChanges();
 
                     //if (updateTask)
