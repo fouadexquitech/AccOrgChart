@@ -350,11 +350,17 @@ namespace AccOrgChart.Repository.Managers
                         childNode.porposedExist = true;
                         childNode.NodeTaskName = subAct.ProposedSubActivity;
                     }
-                    else
-                    {
-                        childNode.TaskName = subAct.SacDesc;
-                        childNode.NodeTaskName = subAct.SacDesc;
+
+                    childNode.TaskName = subAct.SacDesc;
+
+                    if ((childNode.proposedTaskName ?? "") == "")
+                    {                  
+                        childNode.NodeTaskName = childNode.TaskName;
+                        childNode.proposedTaskName = childNode.TaskName;
                     }
+                    else
+                        childNode.NodeTaskName = childNode.proposedTaskName;
+
 
                     childNodes.Add(childNode);
                     node.Children = childNodes;
