@@ -278,7 +278,7 @@
         box-sizing: border-box;
         padding: 15px;
         width: 220px;
-        height: 80px;
+        /*height: 80px;*/
         font-size: 0.7rem;
         border: 1px solid rgba(24, 135, 231, 0.8);
         border-radius: 0 0 4px 4px;
@@ -286,6 +286,7 @@
         background-color: #fff;
         color: #333;
         text-overflow: ellipsis;
+        text-align : left;
         /*white-space: nowrap;*/
     }
 

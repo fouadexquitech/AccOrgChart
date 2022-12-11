@@ -1267,15 +1267,19 @@
         });
       }
       // construct the content of node
+   
         var $nodeDiv = $('<div' + (opts.draggable ? ' draggable="true"' : '') +
             (data[opts.nodeId] ? ' id="' + data[opts.nodeId] + '"' : '') +
             (data.parentId ? ' data-parent="' + data.parentId + '"' : '') +
             (data.roleId ? ' data-role-id="' + data.roleId + '"' : '') +
+            (data.proposedRoleId ? ' data-proposed-role-id="' + data.proposedRoleId + '"' : '') +
             (data.verbId ? ' data-verb-id="' + data.verbId + '"' : '') +
+            (data.proposedVerbId ? ' data-proposed-verb-id="' + data.proposedVerbId + '"' : '') +
             (data.verbName ? ' data-verb-name="' + data.verbName + '"' : '') +
             (data.roleName ? ' data-role-name="' + data.roleName + '"' : '') +
             (data.taskId ? ' data-task-id="' + data.taskId + '"' : '') +
             (data.taskName ? ' data-task-name="' + data.taskName + '"' : '') +
+            (data.proposedTaskName ? ' data-proposed-task-name="' + data.proposedTaskName + '"' : '') +
             (data.type ? ' data-type="' + data.type + '"' : '') + '>')
           .addClass('node ' + (data.className || '') + (level > opts.visibleLevel ? ' slide-up' : ''));
 
@@ -1284,7 +1288,7 @@
         $nodeDiv.append(opts.nodeTemplate(data));
       } else {
         $nodeDiv.append('<div class="title">' + data[opts.nodeTitle] + '</div>')
-            .append(typeof opts.nodeContent !== 'undefined' ? '<div class="content">' + (data[opts.nodeContent] || '') + '</div>' : '');
+            .append(typeof opts.nodeContent !== 'undefined' ? '<div class="content"><strong>Task:</strong> ' + (data[opts.nodeContent] || '') + '</div>' : '');
       }
       //
       var nodeData = $.extend({}, data);
@@ -1313,7 +1317,7 @@
 
         /*Show icon in case proposal exists*/
         if (data.porposedExist) {
-            $nodeDiv.children('.title').append('<br><i class="fa fa-triangle-exclamation text-danger"></i> proposed by ' + data.porposedBy);
+            $nodeDiv.children('.title').append('<br><i class="fa fa-triangle-exclamation text-danger"></i> <small>proposed by ' + data.porposedBy + '</small>');
         }
 
       $nodeDiv.on('mouseenter mouseleave', this.nodeEnterLeaveHandler.bind(this));
@@ -1321,7 +1325,10 @@
       $nodeDiv.on('click', '.topEdge', this.topEdgeClickHandler.bind(this));
       $nodeDiv.on('click', '.bottomEdge', this.bottomEdgeClickHandler.bind(this));
       $nodeDiv.on('click', '.leftEdge, .rightEdge', this.hEdgeClickHandler.bind(this));
-      $nodeDiv.on('click', '.toggleBtn', this.toggleVNodes.bind(this));
+        $nodeDiv.on('click', '.toggleBtn', this.toggleVNodes.bind(this));
+
+
+        $nodeDiv.children('.content').append(data.nodeVerbName !== null ? '<br><strong>Verb:</strong> ' + data.nodeVerbName : '');
 
       if (opts.draggable) {
         this.bindDragDrop($nodeDiv);

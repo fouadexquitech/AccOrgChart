@@ -23,8 +23,8 @@ function buildChart() {
 
     var oc = $('#chart-container').orgchart({
         'data': ajaxUrl,
-        'nodeTitle': 'roleName',
-        'nodeContent': 'taskName',
+        'nodeTitle': 'nodeRoleName',
+        'nodeContent': 'nodeTaskName',
         'nodeType' : 'type',
         'nodeID': 'id',
         'parentNodeSymbol': '',
@@ -168,6 +168,9 @@ $(document).ready(function () {
             let verbId = $(this).attr('data-verb-id');
             let verbName = $(this).attr('data-verb-name');
 
+            let proposedRoleId = $(this).attr('data-proposed-role-id');
+            let proposedVerbId = $(this).attr('data-proposed-verb-id');
+            let propsedTaskName = $(this).attr('data-proposed-task-name');
             resetForm();
             selectedNodeId = id;
            
@@ -186,13 +189,13 @@ $(document).ready(function () {
                     $('#lblRole').text("Proposed Role");
                     $('#lblVerb').text("Proposed Verb");
                     $('#lblTask').text("Proposed Task");
-                    /*getTasks(0, 0, taskId);
-                    getRoles(roleId);
-                    getVerbs(verbId);
-                    $('#txtTaskDesc').val(taskName);*/
-                    getTasks(0, 0, 0);
+                    //getTasks(0, 0, taskId);
+                    getRoles(proposedRoleId);
+                    getVerbs(proposedVerbId);
+                    $('#txtTaskDesc').val(propsedTaskName);
+                    /*getTasks(0, 0, 0);
                     getRoles(0);
-                    getVerbs(0);
+                    getVerbs(0);*/
 
                     $('#modalContent').modal('show');
                 }
@@ -441,6 +444,7 @@ function changeSubActivityDesc(sender) {
 
 
 function getRoles(selectedRoleId) {
+    console.log(selectedRoleId);
     $.ajax({
         'url': '/Jobs/GetJobsList',
         'dataType': 'json'
