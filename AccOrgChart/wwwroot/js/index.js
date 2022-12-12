@@ -231,12 +231,15 @@ $(document).ready(function () {
                 if (key == 'edit') {
                     
                     subActivityMode = 'edit';
+                    $('#currentSubActivity').show();
                     $('#spanSubActivityTitle').text('Edit Sub-Activity');
-                    $('#txtSubActivityName').val(taskName);
+                    $('#lblCurrentSubActivityName').text(taskName);
+                    $('#txtSubActivityName').val(propsedTaskName);
+                    $('#lblTaskName').text('Proposed sub-activity name');
                     $('#modalContentSubActivity').modal('show');
                 }
                 else if (key == 'add') {
-                    $('#currentTaskValues').hide();
+                    $('#currentSubActivity').hide();
                     wfMode = 'add';
                     wfAddMode = 2;
                     $('#spanWfTitle').text('Add');
@@ -262,7 +265,9 @@ $(document).ready(function () {
             else if (type == 1) {
                 if (key == 'add') {
                     subActivityMode = 'add';
+                    $('#currentSubActivity').hide();
                     $('#spanSubActivityTitle').text('Add New Sub-Activity');
+                    $('#lblTaskName').text('Sub-activity name');
                     $('#txtSubActivityName').val('');
                     $('#modalContentSubActivity').modal('show');
                 }

@@ -27,7 +27,7 @@
 <div class="row">
     <div class="col-12 p-2">
         <div class="text-center">
-            <div id="chart-container" style="max-width : 100%; min-height : 100%; overflow:scroll;"></div>
+            <div id="chart-container" style="max-width : 100%; height : 630px; overflow:scroll;"></div>
         </div>
     </div>
 </div>
@@ -41,12 +41,19 @@
                 <h5 class="modal-title"><span id="spanSubActivityTitle"></span></h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-
+             <div class="modal-body" id="currentSubActivity">
+                 <div class="row">
+                    <div class="form-group p-3">
+                        <h5>Sub-Activity Name</h5>
+                        <label id="lblCurrentSubActivityName"></label>
+                    </div>
+                   </div>
+             </div>
             <form id="frmUpdateSubActivity">
                 <div class="modal-body">
                     <div class="row">
                         <div class="form-group p-3">
-                            <label>Sub-Activity Name</label>
+                            <label id="lblTaskName"></label>
                             <input class="form-control" id="txtSubActivityName" name="txtSubActivityName" />
                         </div>
 
